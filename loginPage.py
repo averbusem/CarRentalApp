@@ -2,19 +2,20 @@ from tkinter import *
 from tkinter.messagebox import showinfo
 import tkinter.messagebox
 
-from config import USER, PASS
+from config import USER, PASS, FONT
 
 
 class LoginWindow(Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         elements = []
-        login_text = Label(self, text="Ваш логин")
-        pass_text = Label(self, text="Ваш пароль")
-        self.login = Entry(self)
-        self.password = Entry(self, show='*')
+        greet_msg = Label(self, text="CarRentalApp", font=("Arial", 25))
+        login_text = Label(self, text="Ваш логин", font=FONT)
+        pass_text = Label(self, text="Ваш пароль", font=FONT)
+        self.login = Entry(self, font=FONT)
+        self.password = Entry(self, show='*', font=FONT)
 
-        self.accept_button = Button(self, text="Войти", command=self.signIn)
+        self.accept_button = Button(self, text="Войти", command=self.signIn, font=FONT)
 
         elements += login_text, self.login, pass_text, self.password, self.accept_button
 
@@ -22,7 +23,8 @@ class LoginWindow(Frame):
         self.login.bind("<Return>", self.signIn)
         self.password.bind("<Return>", self.signIn)
 
-        [x.pack() for x in elements]
+        greet_msg.pack(pady=50)
+        [x.pack(pady=10) for x in elements]
 
 
     def signIn(self, *args, **kwargs):
