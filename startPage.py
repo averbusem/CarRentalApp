@@ -1,11 +1,13 @@
+from os.path import expanduser
 from tkinter import *
 from tkinter.messagebox import showinfo
 import tkinter.messagebox
 
+from mainPage import MainPage
 from config import USER, PASS, FONT
 
 
-class LoginWindow(Frame):
+class StartPage(Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         elements = []
@@ -30,7 +32,9 @@ class LoginWindow(Frame):
     def signIn(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Уверены?", message="Уверены в корректности данных?"):
             if self.login.get() == USER and self.password.get() == PASS:
-                tkinter.messagebox.showinfo(title="Отлично", message="Вы успешно вошли в свой профиль!")
+                tkinter.messagebox.showinfo(title="Отлично", message="Вы успешно вошли в профиль!")
                 self.forget()
+                main_page = MainPage(self.master)
+                main_page.pack(expand=True)
             else:
                 tkinter.messagebox.showerror(title="Ошибка", message="Проверьте корректность введённых данных!")
