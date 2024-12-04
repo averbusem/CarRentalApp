@@ -54,7 +54,6 @@ class MainPage(BasePage):
         pcp.pack(expand=True, anchor='center')
 
 
-
 class JustTestPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
