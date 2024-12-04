@@ -1,4 +1,3 @@
-from os.path import expanduser
 from tkinter import *
 from tkinter.messagebox import showinfo
 import tkinter.messagebox

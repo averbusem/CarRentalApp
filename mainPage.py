@@ -1,13 +1,13 @@
 from tkinter import *
 
 from config import FONT
+from clientPages import PreClientsPage
+from basePage import BasePage
 
 
-class MainPage(Frame):
+class MainPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-
-        self.page_elements = []
 
         self.create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.goToNewOrder)
         self.clearing_btn = Button(self, text="Чистка базы данных", font=FONT, command=self.goToClearing)
@@ -26,10 +26,6 @@ class MainPage(Frame):
 
         [x.pack(anchor='e', pady=20) for x in elements]
 
-    def clear_p(self, *args, **kwargs):
-        self.forget()
-        for el in self.page_elements:
-            el.forget()
 
     def goToNewOrder(self, *args, **kwargs):
         self.clear_p()
@@ -53,10 +49,13 @@ class MainPage(Frame):
 
     def goToClients(self, *args, **kwargs):
         self.clear_p()
-        check_p = JustTestPage(self.master)
-        check_p.pack()
+        pcp = PreClientsPage(self.master)
+        pcp.set_previous_page(MainPage)
+        pcp.pack(expand=True, anchor='center')
 
-class JustTestPage(Frame):
+
+
+class JustTestPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         greet_msg = Label(self, text="CarRentalApp", font=("Arial", 25))
