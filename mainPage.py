@@ -1,5 +1,6 @@
 from tkinter import *
 
+from clearingPages import PreClearingPage
 from config import FONT
 from clientPages import PreClientsPage
 from carPages import PreCarsPage
@@ -36,8 +37,8 @@ class MainPage(BasePage):
 
     def goToClearing(self, *args, **kwargs):
         self.clear_p()
-        check_p = JustTestPage(self.master)
-        check_p.pack()
+        clearing_p = PreClearingPage(self.master)
+        clearing_p.pack(expand=True, anchor='center')
 
     def goToOrders(self, *args, **kwargs):
         self.clear_p()
