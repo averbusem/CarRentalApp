@@ -5,7 +5,7 @@ from config import FONT
 from clientPages import PreClientsPage
 from carPages import PreCarsPage
 from basePage import BasePage
-from orderPages import PreOrdersPage
+from orderPages import PreOrdersPage, NewOrderPage
 
 
 class MainPage(BasePage):
@@ -32,8 +32,8 @@ class MainPage(BasePage):
 
     def goToNewOrder(self, *args, **kwargs):
         self.clear_p()
-        check_p = JustTestPage(self.master)
-        check_p.pack()
+        new_order_p = NewOrderPage(self.master)
+        new_order_p.pack(expand=True, anchor='center')
 
     def goToClearing(self, *args, **kwargs):
         self.clear_p()
