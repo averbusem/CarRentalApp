@@ -2,7 +2,9 @@ from tkinter import *
 
 from config import FONT
 from clientPages import PreClientsPage
+from carPages import PreCarsPage
 from basePage import BasePage
+from orderPages import PreOrdersPage
 
 
 class MainPage(BasePage):
@@ -39,18 +41,17 @@ class MainPage(BasePage):
 
     def goToOrders(self, *args, **kwargs):
         self.clear_p()
-        check_p = JustTestPage(self.master)
-        check_p.pack()
+        orders_p = PreOrdersPage(self.master)
+        orders_p.pack(expand=True, anchor='center')
 
     def goToCars(self, *args, **kwargs):
         self.clear_p()
-        check_p = JustTestPage(self.master)
-        check_p.pack()
+        car_p = PreCarsPage(self.master)
+        car_p.pack(expand=True, anchor='center')
 
     def goToClients(self, *args, **kwargs):
         self.clear_p()
         pcp = PreClientsPage(self.master)
-        pcp.set_previous_page(MainPage)
         pcp.pack(expand=True, anchor='center')
 
 
