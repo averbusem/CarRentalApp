@@ -67,19 +67,57 @@ class NewOrderPage(BasePage):
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
-        enter_name = Label(self, text="Введите ФИО клиента", font=FONT)
-        enter_car = Label(self, text="Введите марку и модель авто", font=FONT)
+        enter_passport = Label(self, text="Введите паспорт клиента", font=FONT)
+        enter_car = Label(self, text="Введите VIN авто", font=FONT)
         enter_booking_start_date = Label(self, text="Введите дату начала бронирования", font=FONT)
         enter_booking_end_date = Label(self, text="Введите дату конца бронирования", font=FONT)
+
+
 
         self.name_field = Entry(self, font=FONT)
         self.car_field = Entry(self, font=FONT)
         self.booking_start_date = Entry(self, font=FONT)
         self.booking_end_date = Entry(self, font=FONT)
 
-        elements = [enter_name, self.name_field, enter_car, self.car_field, enter_booking_start_date,
+        elements = [enter_passport, self.name_field, enter_car, self.car_field, enter_booking_start_date,
                     self.booking_start_date, enter_booking_end_date, self.booking_end_date]
 
         self.page_elements += elements
 
         [x.pack(pady=8) for x in elements]
+
+        back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+        back_btn.pack(pady=10)
+
+
+class CloseOrderPage(BasePage):
+    def __init__(self, master, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        from mainPage import MainPage
+        self.set_previous_page(MainPage)
+
+        page_name_txt = Label(text="Закрыть заказ", font=("Arial", 25))
+        page_name_txt.pack(pady=30)
+        self.page_elements.append(page_name_txt)
+
+        enter_car = Label(self, text="Введите VIN авто", font=FONT)
+        enter_passport = Label(self, text="Введите паспорт клиента", font=FONT)
+
+        self.name_field = Entry(self, font=FONT)
+        self.car_field = Entry(self, font=FONT)
+
+        elements = [enter_passport, self.name_field, enter_car, self.car_field]
+
+        self.page_elements += elements
+
+        [x.pack(pady=8) for x in elements]
+
+        close_order = Button(self, text="Закрыть заказ", font=FONT, command=self.closeOrder)
+        back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+
+        close_order.pack(pady=10)
+        back_btn.pack(pady=10)
+
+    #функция закрытия заказа
+    def closeOrder(self):
+        pass

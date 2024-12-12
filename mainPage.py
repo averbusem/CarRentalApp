@@ -1,3 +1,4 @@
+from sys import exec_prefix
 from tkinter import *
 
 from clearingPages import PreClearingPage
@@ -5,7 +6,7 @@ from config import FONT
 from clientPages import PreClientsPage
 from carPages import PreCarsPage
 from basePage import BasePage
-from orderPages import PreOrdersPage, NewOrderPage
+from orderPages import PreOrdersPage, NewOrderPage, CloseOrderPage
 
 
 class MainPage(BasePage):
@@ -13,6 +14,7 @@ class MainPage(BasePage):
         super().__init__(master, *args, **kwargs)
 
         self.create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.goToNewOrder)
+        self.close_order_btn = Button(self, text="Закрыть заказ", font=FONT, command=self.goToClosingOrder)
         self.clearing_btn = Button(self, text="Чистка базы данных", font=FONT, command=self.goToClearing)
         self.orders_btn = Button(self, text="Заказы", font=FONT, command=self.goToOrders)
         self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars)
@@ -22,7 +24,8 @@ class MainPage(BasePage):
 
         self.earnings_txt.pack(side=LEFT, padx=260)
 
-        elements = [self.create_order_btn, self.clearing_btn, self.orders_btn, self.cars_btn, self.clients_btn]
+        elements = [self.create_order_btn, self.close_order_btn, self.clearing_btn, self.orders_btn, self.cars_btn,
+                    self.clients_btn]
 
         self.page_elements += elements
         self.page_elements.append(self.earnings_txt)
@@ -34,6 +37,11 @@ class MainPage(BasePage):
         self.clear_p()
         new_order_p = NewOrderPage(self.master)
         new_order_p.pack(expand=True, anchor='center')
+
+    def goToClosingOrder(self, *args, **kwargs):
+        self.clear_p()
+        close_order_p = CloseOrderPage(self.master)
+        close_order_p.pack(expand=True, anchor='center')
 
     def goToClearing(self, *args, **kwargs):
         self.clear_p()
