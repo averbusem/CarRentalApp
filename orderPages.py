@@ -86,8 +86,15 @@ class NewOrderPage(BasePage):
 
         [x.pack(pady=8) for x in elements]
 
+        create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.createOrder)
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+
+        create_order_btn.pack(pady=10)
         back_btn.pack(pady=10)
+
+    #функция создания заказа
+    def createOrder(self):
+        pass
 
 
 class CloseOrderPage(BasePage):
