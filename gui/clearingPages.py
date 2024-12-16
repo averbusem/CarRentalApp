@@ -1,8 +1,8 @@
 import tkinter.messagebox
 from tkinter import *
 
-from gui.config import FONT
 from gui.basePage import BasePage
+from gui.config import FONT
 
 
 class PreClearingPage(BasePage):

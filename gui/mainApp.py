@@ -1,5 +1,7 @@
 from tkinter import *
+
 from gui.startPage import StartPage
+
 
 class App:
     def __init__(self):

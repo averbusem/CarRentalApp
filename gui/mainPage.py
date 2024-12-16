@@ -1,11 +1,11 @@
 from tkinter import *
 
-from gui.clearingPages import PreClearingPage
-from gui.config import FONT
-from gui.clientPages import PreClientsPage
-from gui.carPages import PreCarsPage
 from gui.basePage import BasePage
-from gui.orderPages import PreOrdersPage, NewOrderPage, CloseOrderPage
+from gui.carPages import PreCarsPage
+from gui.clearingPages import PreClearingPage
+from gui.clientPages import PreClientsPage
+from gui.config import FONT
+from gui.orderPages import CloseOrderPage, NewOrderPage, PreOrdersPage
 
 
 class MainPage(BasePage):

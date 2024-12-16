@@ -1,7 +1,8 @@
 from tkinter import *
 
-from gui.config import FONT
 from gui.basePage import BasePage
+from gui.config import FONT
+
 
 class PreOrdersPage(BasePage):
     def __init__(self, master, *args, **kwargs):
