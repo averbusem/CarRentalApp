@@ -1,15 +1,15 @@
 import tkinter.messagebox
 from tkinter import *
 
-from config import FONT
-from basePage import BasePage
+from gui.config import FONT
+from gui.basePage import BasePage
 
 
 class PreClearingPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-        from mainPage import MainPage
+        from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
         self.total_clearing_btn = Button(self, text="Очистка всей базы данных", font=FONT, command=self.totalClearing)

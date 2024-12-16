@@ -1,5 +1,5 @@
 from tkinter import *
-from startPage import StartPage
+from gui.startPage import StartPage
 
 class App:
     def __init__(self):

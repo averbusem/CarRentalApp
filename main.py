@@ -1,4 +1,3 @@
-from mainApp import App
-
+from gui.mainApp import App
 app = App()
 app.loop()

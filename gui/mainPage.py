@@ -1,12 +1,11 @@
-from sys import exec_prefix
 from tkinter import *
 
-from clearingPages import PreClearingPage
-from config import FONT
-from clientPages import PreClientsPage
-from carPages import PreCarsPage
-from basePage import BasePage
-from orderPages import PreOrdersPage, NewOrderPage, CloseOrderPage
+from gui.clearingPages import PreClearingPage
+from gui.config import FONT
+from gui.clientPages import PreClientsPage
+from gui.carPages import PreCarsPage
+from gui.basePage import BasePage
+from gui.orderPages import PreOrdersPage, NewOrderPage, CloseOrderPage
 
 
 class MainPage(BasePage):

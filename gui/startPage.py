@@ -2,8 +2,8 @@ from tkinter import *
 from tkinter.messagebox import showinfo
 import tkinter.messagebox
 
-from mainPage import MainPage
-from config import USER, PASS, FONT
+from gui.mainPage import MainPage
+from gui.config import USER, PASS, FONT
 
 
 class StartPage(Frame):

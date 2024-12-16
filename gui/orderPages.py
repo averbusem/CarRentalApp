@@ -1,13 +1,13 @@
 from tkinter import *
 
-from config import FONT
-from basePage import BasePage
+from gui.config import FONT
+from gui.basePage import BasePage
 
 class PreOrdersPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-        from mainPage import MainPage
+        from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
         self.valid_orders_btn = Button(self, text="Просмотр действующих заказов", font=FONT, command=self.showOrdersNow)
@@ -60,7 +60,7 @@ class AllOrdersPage(BasePage):
 class NewOrderPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        from mainPage import MainPage
+        from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
         page_name_txt = Label(text="Создать новый заказ", font=("Arial", 25))
@@ -100,7 +100,7 @@ class NewOrderPage(BasePage):
 class CloseOrderPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        from mainPage import MainPage
+        from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
         page_name_txt = Label(text="Закрыть заказ", font=("Arial", 25))

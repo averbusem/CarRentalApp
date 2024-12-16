@@ -1,14 +1,14 @@
 from tkinter import *
 
-from config import FONT
-from basePage import BasePage
+from gui.config import FONT
+from gui.basePage import BasePage
 
 
 class PreCarsPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-        from mainPage import MainPage
+        from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
         self.all_cars_btn = Button(self, text="Просмотр всех машин", font=FONT, command=self.listOfCars)
