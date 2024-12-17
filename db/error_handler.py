@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 class DatabaseErrorHandler:
     def __init__(self, log_file="database_errors.log"):
         self.log_file = log_file

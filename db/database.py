@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras as extras
+
 from .config import DATABASE_CONFIG_ADMIN, DATABASE_CONFIG_OWNER
 from .error_handler import DatabaseErrorHandler
 
