@@ -1,3 +1,3 @@
 from db.database import Database
 
-db = Database
+db = Database()

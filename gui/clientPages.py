@@ -3,6 +3,7 @@ from tkinter import *
 from db import db
 from gui.basePage import BasePage
 from gui.config import FONT
+import logging
 
 
 class PreClientsPage(BasePage):
@@ -103,37 +104,47 @@ class AddClientPage(BasePage):
 
         enter_passport = Label(self, text="Введите паспорт клиента", font=FONT)
         enter_name = Label(self, text="Введите имя клиента", font=FONT)
-        enter_second_name = Label(self, text="Введите фамилию клиента", font=FONT)
+        enter_middle_name = Label(self, text="Введите фамилию клиента", font=FONT)
         enter_last_name = Label(self, text="Введите отчество клиента", font=FONT)
         enter_email = Label(self, text="Введите почту клиента", font=FONT)
         enter_number = Label(self, text="Введите номер телефона клиента", font=FONT)
 
         self.passport_field = Entry(self, font=FONT)
         self.name_field = Entry(self, font=FONT)
-        self.second_name_field = Entry(self, font=FONT)
+        self.middle_name_field = Entry(self, font=FONT)
         self.last_name_field = Entry(self, font=FONT)
         self.email_field = Entry(self, font=FONT)
         self.number_field = Entry(self, font=FONT)
 
 
-        elements = [enter_passport, self.passport_field, enter_name, self.name_field, enter_second_name,
-                    self.second_name_field, enter_last_name, self.last_name_field, enter_email, self.email_field,
+        elements = [enter_passport, self.passport_field, enter_name, self.name_field, enter_middle_name,
+                    self.middle_name_field, enter_last_name, self.last_name_field, enter_email, self.email_field,
                     enter_number, self.number_field]
 
         self.page_elements += elements
 
         [x.pack(pady=4) for x in elements]
 
-        add_client_btn = Button(self, text="Добавить клиента", font=FONT, command=self.addClient)
+        client_info = [self.passport_field.get(), self.name_field.get(), self.middle_name_field.get(),
+                       self.last_name_field.get(), self.email_field.get(), self.number_field.get()]
+        add_client_btn = Button(self, text="Добавить клиента", font=FONT, command=lambda: self.addClient(client_info))
+
+
+
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
 
         add_client_btn.pack(pady=10)
         back_btn.pack(pady=10)
 
     # функция добавления клиента
-    def addClient(self):
+    def addClient(self, client_info: list):
         pass
-
+        """
+        db.add_customer(client_info[0], client_info[1], client_info[2], client_info[3], client_info[4],
+                        client_info[5])
+        logging.info(f"Добавлен клиент: {client_info[0]} | {client_info[1]} | {client_info[2]} | "
+                     f"{client_info[3]} | {client_info[4]} | {client_info[5]}")
+        """
 
 class DeleteClientPage(BasePage):
     def __init__(self, master, *args, **kwargs):
