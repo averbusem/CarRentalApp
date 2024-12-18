@@ -1,12 +1,11 @@
 from tkinter import *
-
 from gui.basePage import BasePage
 from gui.config import FONT
 
 
 class PreCarsPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
@@ -32,49 +31,44 @@ class PreCarsPage(BasePage):
 
     def listOfCars(self, *args, **kwargs):
         self.clear_p()
-        all_cars_page = AllCarsPage(self.master)
+        all_cars_page = AllCarsPage(self.master, db=self.db)
         all_cars_page.set_previous_page(PreCarsPage)
         all_cars_page.pack(expand=True, anchor="center")
 
-
     def checkFreeCars(self, *args, **kwargs):
         self.clear_p()
-        free_cars_page = FreeCarsPage(self.master)
+        free_cars_page = FreeCarsPage(self.master, db=self.db)
         free_cars_page.set_previous_page(PreCarsPage)
         free_cars_page.pack(expand=True, anchor="center")
 
-
     def findCar(self, *args, **kwargs):
         self.clear_p()
-        find_car_page = FindCarPage(self.master)
+        find_car_page = FindCarPage(self.master, db=self.db)
         find_car_page.set_previous_page(PreCarsPage)
         find_car_page.pack(expand=True, anchor="center")
 
-
     def addCar(self, *args, **kwargs):
         self.clear_p()
-        add_car_page = AddCarPage(self.master)
+        add_car_page = AddCarPage(self.master, db=self.db)
         add_car_page.set_previous_page(PreCarsPage)
         add_car_page.pack(expand=True, anchor="center")
-
 
     def addCarModel(self, *args, **kwargs):
         self.clear_p()
-        add_car_page = AddModelPage(self.master)
+        add_car_page = AddModelPage(self.master, db=self.db)
         add_car_page.set_previous_page(PreCarsPage)
         add_car_page.pack(expand=True, anchor="center")
 
-
     def deleteCar(self, *args, **kwargs):
         self.clear_p()
-        delete_car_page = DeleteCarPage(self.master)
+        delete_car_page = DeleteCarPage(self.master, db=self.db)
         delete_car_page.set_previous_page(PreCarsPage)
         delete_car_page.pack(expand=True, anchor="center")
 
 
 class AllCarsPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
         page_name_txt = Label(self, text="Просмотр всех авто", font=("Arial", 25))
         page_name_txt.pack(pady=30)
 
@@ -83,8 +77,8 @@ class AllCarsPage(BasePage):
 
 
 class FreeCarsPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
         page_name_txt = Label(self, text="Просмотр свободных авто", font=("Arial", 25))
         page_name_txt.pack(pady=30)
 
@@ -93,8 +87,8 @@ class FreeCarsPage(BasePage):
 
 
 class FindCarPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
         page_name_txt = Label(self, text="Найти авто", font=("Arial", 25))
         page_name_txt.pack(pady=30)
 
@@ -116,15 +110,13 @@ class FindCarPage(BasePage):
         find_btn.pack(pady=15)
         back_btn.pack(pady=15)
 
-
-    #логика перехода на страницу с инфой о машинах
     def findCars(self, *args, **kwargs):
         pass
 
 
 class AddCarPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
         self.set_previous_page(PreCarsPage)
 
         page_name_txt = Label(text="Добавление авто", font=("Arial", 25))
@@ -143,7 +135,6 @@ class AddCarPage(BasePage):
         self.model_field = Entry(self, font=FONT)
         self.color_field = Entry(self, font=FONT)
 
-
         elements = [enter_vin, self.vin_field, enter_number, self.number_field, enter_brand,
                     self.brand_field, enter_model, self.model_field, enter_color, self.color_field]
 
@@ -157,14 +148,13 @@ class AddCarPage(BasePage):
         add_car_btn.pack(pady=10)
         back_btn.pack(pady=10)
 
-    # функция добавления авто
     def addCar(self):
         pass
 
 
 class AddModelPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
         self.set_previous_page(PreCarsPage)
 
         page_name_txt = Label(text="Добавление модели авто", font=("Arial", 25))
@@ -178,15 +168,12 @@ class AddModelPage(BasePage):
         enter_transmission = Label(self, text="Введите 0, если КПП автоматическая или 1, если КПП механическая", font=FONT)
         enter_price = Label(self, text="Введите стоимость за день проката", font=FONT)
 
-
         self.brand_field = Entry(self, font=FONT)
         self.model_name_field = Entry(self, font=FONT)
         self.engine_volume = Entry(self, font=FONT)
         self.power_field = Entry(self, font=FONT)
         self.trans_field = Entry(self, font=FONT)
         self.price_field = Entry(self, font=FONT)
-
-
 
         elements = [enter_brand, self.brand_field, enter_model_name, self.model_name_field, enter_eng_volume,
                     self.engine_volume, enter_h_power, self.power_field, enter_transmission, self.trans_field,
@@ -202,14 +189,13 @@ class AddModelPage(BasePage):
         add_model_btn.pack(pady=10)
         back_btn.pack(pady=10)
 
-    # функция добавления модели
     def addModel(self):
         pass
 
 
 class DeleteCarPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
         self.set_previous_page(PreCarsPage)
 
         page_name_txt = Label(text="Удаление авто", font=("Arial", 25))
@@ -231,6 +217,5 @@ class DeleteCarPage(BasePage):
         delete_car_btn.pack(pady=10)
         back_btn.pack(pady=10)
 
-    # функция удаления авто
     def deleteCar(self):
         pass

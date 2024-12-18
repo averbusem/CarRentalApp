@@ -1,14 +1,13 @@
-from tkinter import *
-
-from db import db
+from tkinter import Button, Label, Entry
 from gui.basePage import BasePage
 from gui.config import FONT
 import logging
 
 
 class PreClientsPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем db в экземпляре класса
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
@@ -22,10 +21,8 @@ class PreClientsPage(BasePage):
         self.name_txt = Label(text=f"Клиенты", font=("Arial", 25))
         self.name_txt.pack(pady=40)
 
-
         elements = [self.all_clients_btn, self.find_client_btn, self.add_client_btn, self.delete_client_btn,
                     self.back_btn]
-
         self.page_elements += elements
         self.page_elements.append(self.name_txt)
 
@@ -33,32 +30,34 @@ class PreClientsPage(BasePage):
 
     def listOfClients(self, *args, **kwargs):
         self.clear_p()
-        clients_page = ClientsListPage(self.master)
+        clients_page = ClientsListPage(self.master, self.db)  # Передаем db
         clients_page.set_previous_page(PreClientsPage)
         clients_page.pack(expand=True, anchor="center")
 
     def findClient(self, *args, **kwargs):
         self.clear_p()
-        find_client_page = FindClientPage(self.master)
+        find_client_page = FindClientPage(self.master, self.db)  # Передаем db
         find_client_page.set_previous_page(PreClientsPage)
         find_client_page.pack(expand=True, anchor="center")
 
     def addClient(self, *args, **kwargs):
         self.clear_p()
-        add_client_page = AddClientPage(self.master)
+        add_client_page = AddClientPage(self.master, self.db)  # Передаем db
         add_client_page.set_previous_page(PreClientsPage)
         add_client_page.pack(expand=True, anchor="center")
 
     def deleteClient(self, *args, **kwargs):
         self.clear_p()
-        delete_client_page = DeleteClientPage(self.master)
+        delete_client_page = DeleteClientPage(self.master, self.db)  # Передаем db
         delete_client_page.set_previous_page(PreClientsPage)
         delete_client_page.pack(expand=True, anchor="center")
 
 
 class ClientsListPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем db
+
         page_name_txt = Label(self, text="Список клиентов", font=("Arial", 25))
         page_name_txt.pack(pady=30)
 
@@ -67,17 +66,17 @@ class ClientsListPage(BasePage):
 
 
 class FindClientPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем db
+
         page_name_txt = Label(self, text="Найти информацию о клиенте", font=("Arial", 25))
         page_name_txt.pack(pady=120)
 
         enter_info = Label(self, text="Введите паспорт или почту", font=FONT)
-
         info_field = Entry(self, font=FONT)
 
         elements = [enter_info, info_field]
-
         self.page_elements += elements
 
         [x.pack(pady=10) for x in elements]
@@ -88,14 +87,15 @@ class FindClientPage(BasePage):
         find_btn.pack(pady=15)
         back_btn.pack(pady=15)
 
-    # логика перехода на страницу с инфой о клиенте
     def findClient(self, *args, **kwargs):
         pass
 
 
 class AddClientPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем db
+
         self.set_previous_page(PreClientsPage)
 
         page_name_txt = Label(text="Добавление клиента", font=("Arial", 25))
@@ -123,16 +123,13 @@ class AddClientPage(BasePage):
         self.page_elements += elements
         [x.pack(pady=4) for x in elements]
 
-        # Передаем функцию addClient напрямую
         add_client_btn = Button(self, text="Добавить клиента", font=FONT, command=self.addClient)
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
 
         add_client_btn.pack(pady=10)
         back_btn.pack(pady=10)
 
-    # Функция добавления клиента
     def addClient(self):
-        # Извлекаем данные из полей ввода в момент нажатия кнопки
         client_info = [
             self.passport_field.get().strip(),
             self.name_field.get().strip(),
@@ -142,24 +139,23 @@ class AddClientPage(BasePage):
             self.number_field.get().strip()
         ]
 
-        # Проверяем, что все поля заполнены
         if any(not field for field in client_info):
             print("Error: Все поля должны быть заполнены!")
             return
 
-        # Добавляем клиента в базу данных
         try:
-            db.add_customer(client_info[0], client_info[1], client_info[2], client_info[3], client_info[4], client_info[5])
+            self.db.add_customer(client_info[0], client_info[1], client_info[2], client_info[3], client_info[4], client_info[5])
             print("Клиент успешно добавлен!")
         except Exception as e:
             logging.error(f"Ошибка при добавлении клиента: {e}")
             print("Не удалось добавить клиента. Проверьте корректность данных.")
 
 
-
 class DeleteClientPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем db
+
         self.set_previous_page(PreClientsPage)
 
         page_name_txt = Label(text="Удаление клиента", font=("Arial", 25))
@@ -172,7 +168,6 @@ class DeleteClientPage(BasePage):
         elements = [enter_email, self.email_field]
 
         self.page_elements += elements
-
         [x.pack(pady=15) for x in elements]
 
         delete_client_btn = Button(self, text="Удалить клиента", font=FONT, command=self.deleteClient)
@@ -181,6 +176,5 @@ class DeleteClientPage(BasePage):
         delete_client_btn.pack(pady=10)
         back_btn.pack(pady=10)
 
-    # функция удаления клиента
     def deleteClient(self):
         pass

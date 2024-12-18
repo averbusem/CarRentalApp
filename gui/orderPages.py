@@ -5,8 +5,9 @@ from gui.config import FONT
 
 
 class PreOrdersPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем объект базы данных
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
@@ -27,30 +28,32 @@ class PreOrdersPage(BasePage):
 
     def showOrdersNow(self, *args, **kwargs):
         self.clear_p()
-        valid_orders_page = ValidOrdersPage(self.master)
+        valid_orders_page = ValidOrdersPage(self.master, self.db)  # Передаем db в ValidOrdersPage
         valid_orders_page.set_previous_page(PreOrdersPage)
         valid_orders_page.pack(expand=True, anchor="center")
 
     def showAllOrders(self, *args, **kwargs):
         self.clear_p()
-        all_orders_page = AllOrdersPage(self.master)
+        all_orders_page = AllOrdersPage(self.master, self.db)  # Передаем db в AllOrdersPage
         all_orders_page.set_previous_page(PreOrdersPage)
         all_orders_page.pack(expand=True, anchor="center")
 
 
+
 class ValidOrdersPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем объект базы данных
         page_name_txt = Label(self, text="Действующие заказы", font=("Arial", 25))
         page_name_txt.pack(pady=30)
 
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
         back_btn.pack()
 
-
 class AllOrdersPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем объект базы данных
         page_name_txt = Label(self, text="Все заказы", font=("Arial", 25))
         page_name_txt.pack(pady=30)
 
@@ -58,9 +61,12 @@ class AllOrdersPage(BasePage):
         back_btn.pack()
 
 
+
 class NewOrderPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем объект базы данных
+
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
@@ -72,8 +78,6 @@ class NewOrderPage(BasePage):
         enter_car = Label(self, text="Введите VIN авто", font=FONT)
         enter_booking_start_date = Label(self, text="Введите дату начала бронирования", font=FONT)
         enter_booking_end_date = Label(self, text="Введите дату конца бронирования", font=FONT)
-
-
 
         self.name_field = Entry(self, font=FONT)
         self.car_field = Entry(self, font=FONT)
@@ -99,8 +103,10 @@ class NewOrderPage(BasePage):
 
 
 class CloseOrderPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.db = db  # Сохраняем объект базы данных
+
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
@@ -125,6 +131,7 @@ class CloseOrderPage(BasePage):
 
         close_order.pack(pady=10)
         back_btn.pack(pady=10)
+
 
     #функция закрытия заказа
     def closeOrder(self):

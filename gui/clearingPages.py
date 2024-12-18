@@ -6,8 +6,8 @@ from gui.config import FONT
 
 
 class PreClearingPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db=db, *args, **kwargs)
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
@@ -33,26 +33,26 @@ class PreClearingPage(BasePage):
         if tkinter.messagebox.askyesno(title="Очистка всех баз данных",
                                        message="Вы собираетесь очистить все базы данных\n\n"
                                                "Вы уверены?"):
-            #реализовать логику удаления БД
+            # Реализовать логику удаления всех баз данных
             pass
 
     def carsClearing(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Очистка автопарка",
                                        message="Вы собираетесь очистить данные автопарка\n\n"
                                                "Вы уверены?"):
-            #реализовать логику удаления БД
+            # Реализовать логику удаления данных автопарка
             pass
 
     def clientsClearing(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Очистка клиентской базы",
                                        message="Вы собираетесь очистить данные о всех клиентах\n\n"
                                                "Вы уверены?"):
-            #реализовать логику удаления БД
+            # Реализовать логику удаления данных о клиентах
             pass
 
     def ordersClearing(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Очистка заказов",
                                        message="Вы собираетесь очистить данные о всех заказах (кроме действующих)\n\n"
                                                "Вы уверены?"):
-            #реализовать логику удаления БД
+            # Реализовать логику удаления данных о заказах
             pass

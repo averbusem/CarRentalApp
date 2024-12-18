@@ -9,8 +9,12 @@ from gui.orderPages import CloseOrderPage, NewOrderPage, PreOrdersPage
 
 
 class MainPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
+        # Передаем объект базы данных (db) и передаем его в родительский класс
         super().__init__(master, *args, **kwargs)
+
+        # Сохраняем объект базы данных для дальнейшего использования
+        self.db = db
 
         self.create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.goToNewOrder)
         self.close_order_btn = Button(self, text="Закрыть заказ", font=FONT, command=self.goToClosingOrder)
@@ -31,35 +35,34 @@ class MainPage(BasePage):
 
         [x.pack(anchor='e', pady=20) for x in elements]
 
-
     def goToNewOrder(self, *args, **kwargs):
         self.clear_p()
-        new_order_p = NewOrderPage(self.master)
+        new_order_p = NewOrderPage(self.master, self.db)  # Передаем db в NewOrderPage
         new_order_p.pack(expand=True, anchor='center')
 
     def goToClosingOrder(self, *args, **kwargs):
         self.clear_p()
-        close_order_p = CloseOrderPage(self.master)
+        close_order_p = CloseOrderPage(self.master, self.db)  # Передаем db
         close_order_p.pack(expand=True, anchor='center')
 
     def goToClearing(self, *args, **kwargs):
         self.clear_p()
-        clearing_p = PreClearingPage(self.master)
+        clearing_p = PreClearingPage(self.master, self.db)  # Передаем db
         clearing_p.pack(expand=True, anchor='center')
 
     def goToOrders(self, *args, **kwargs):
         self.clear_p()
-        orders_p = PreOrdersPage(self.master)
+        orders_p = PreOrdersPage(self.master, self.db)  # Передаем db
         orders_p.pack(expand=True, anchor='center')
 
     def goToCars(self, *args, **kwargs):
         self.clear_p()
-        car_p = PreCarsPage(self.master)
+        car_p = PreCarsPage(self.master, self.db)  # Передаем db
         car_p.pack(expand=True, anchor='center')
 
     def goToClients(self, *args, **kwargs):
         self.clear_p()
-        pcp = PreClientsPage(self.master)
+        pcp = PreClientsPage(self.master, self.db)  # Передаем db
         pcp.pack(expand=True, anchor='center')
 
 
