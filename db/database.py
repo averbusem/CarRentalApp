@@ -55,6 +55,8 @@ class Database:
 
     def add_customer(self, passport_number, first_name, middle_name, last_name, email, phone_number):
         """Add a new customer."""
+        print(
+            f"Attempting to add: {passport_number}, {first_name}, {middle_name}, {last_name}, {email}, {phone_number}")
         query = "SELECT add_customer(%s, %s, %s, %s, %s, %s);"
         try:
             with self.connection.cursor() as cursor:

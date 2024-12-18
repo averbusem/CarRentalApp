@@ -116,35 +116,46 @@ class AddClientPage(BasePage):
         self.email_field = Entry(self, font=FONT)
         self.number_field = Entry(self, font=FONT)
 
-
         elements = [enter_passport, self.passport_field, enter_name, self.name_field, enter_middle_name,
                     self.middle_name_field, enter_last_name, self.last_name_field, enter_email, self.email_field,
                     enter_number, self.number_field]
 
         self.page_elements += elements
-
         [x.pack(pady=4) for x in elements]
 
-        client_info = [self.passport_field.get(), self.name_field.get(), self.middle_name_field.get(),
-                       self.last_name_field.get(), self.email_field.get(), self.number_field.get()]
-        add_client_btn = Button(self, text="Добавить клиента", font=FONT, command=lambda: self.addClient(client_info))
-
-
-
+        # Передаем функцию addClient напрямую
+        add_client_btn = Button(self, text="Добавить клиента", font=FONT, command=self.addClient)
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
 
         add_client_btn.pack(pady=10)
         back_btn.pack(pady=10)
 
-    # функция добавления клиента
-    def addClient(self, client_info: list):
-        pass
-        """
-        db.add_customer(client_info[0], client_info[1], client_info[2], client_info[3], client_info[4],
-                        client_info[5])
-        logging.info(f"Добавлен клиент: {client_info[0]} | {client_info[1]} | {client_info[2]} | "
-                     f"{client_info[3]} | {client_info[4]} | {client_info[5]}")
-        """
+    # Функция добавления клиента
+    def addClient(self):
+        # Извлекаем данные из полей ввода в момент нажатия кнопки
+        client_info = [
+            self.passport_field.get().strip(),
+            self.name_field.get().strip(),
+            self.middle_name_field.get().strip(),
+            self.last_name_field.get().strip(),
+            self.email_field.get().strip(),
+            self.number_field.get().strip()
+        ]
+
+        # Проверяем, что все поля заполнены
+        if any(not field for field in client_info):
+            print("Error: Все поля должны быть заполнены!")
+            return
+
+        # Добавляем клиента в базу данных
+        try:
+            db.add_customer(client_info[0], client_info[1], client_info[2], client_info[3], client_info[4], client_info[5])
+            print("Клиент успешно добавлен!")
+        except Exception as e:
+            logging.error(f"Ошибка при добавлении клиента: {e}")
+            print("Не удалось добавить клиента. Проверьте корректность данных.")
+
+
 
 class DeleteClientPage(BasePage):
     def __init__(self, master, *args, **kwargs):
