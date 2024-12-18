@@ -1,13 +1,12 @@
 from tkinter import *
 
 from gui.basePage import BasePage
-from gui.config import FONT
+from gui.config import FONT, TITLE_FONT
 
 
 class PreOrdersPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем объект базы данных
+        super().__init__(master, db, *args, **kwargs)
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
@@ -16,7 +15,7 @@ class PreOrdersPage(BasePage):
         self.all_orders_btn = Button(self, text="Просмотр всех заказов", font=FONT, command=self.showAllOrders)
         self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
 
-        self.name_txt = Label(text=f"Заказы", font=("Arial", 25))
+        self.name_txt = Label(text=f"Заказы", font=TITLE_FONT)
         self.name_txt.pack(pady=40)
 
         elements = [self.valid_orders_btn, self.all_orders_btn, self.back_btn]
@@ -42,9 +41,8 @@ class PreOrdersPage(BasePage):
 
 class ValidOrdersPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем объект базы данных
-        page_name_txt = Label(self, text="Действующие заказы", font=("Arial", 25))
+        super().__init__(master, db, *args, **kwargs)
+        page_name_txt = Label(self, text="Действующие заказы", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
@@ -52,9 +50,8 @@ class ValidOrdersPage(BasePage):
 
 class AllOrdersPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем объект базы данных
-        page_name_txt = Label(self, text="Все заказы", font=("Arial", 25))
+        super().__init__(master, db, *args, **kwargs)
+        page_name_txt = Label(self, text="Все заказы", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
@@ -64,13 +61,12 @@ class AllOrdersPage(BasePage):
 
 class NewOrderPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем объект базы данных
+        super().__init__(master, db, *args, **kwargs)
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
-        page_name_txt = Label(text="Создать новый заказ", font=("Arial", 25))
+        page_name_txt = Label(text="Создать новый заказ", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
@@ -104,13 +100,12 @@ class NewOrderPage(BasePage):
 
 class CloseOrderPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем объект базы данных
+        super().__init__(master, db,*args, **kwargs)
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
-        page_name_txt = Label(text="Закрыть заказ", font=("Arial", 25))
+        page_name_txt = Label(text="Закрыть заказ", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 

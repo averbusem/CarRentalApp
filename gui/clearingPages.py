@@ -2,7 +2,7 @@ import tkinter.messagebox
 from tkinter import *
 
 from gui.basePage import BasePage
-from gui.config import FONT
+from gui.config import FONT, TITLE_FONT
 
 
 class PreClearingPage(BasePage):
@@ -18,7 +18,7 @@ class PreClearingPage(BasePage):
         self.orders_clearing_btn = Button(self, text="Очистка базы заказов", font=FONT, command=self.ordersClearing)
         self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
 
-        self.name_txt = Label(text=f"Очистка баз данных", font=("Arial", 25))
+        self.name_txt = Label(text=f"Очистка баз данных", font=TITLE_FONT)
         self.name_txt.pack(pady=40)
 
         elements = [self.total_clearing_btn, self.cars_clearing_btn, self.clients_clearing_btn, self.orders_clearing_btn,

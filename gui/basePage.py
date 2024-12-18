@@ -2,10 +2,11 @@ from tkinter import *
 
 
 class BasePage(Frame):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.previous_page_class = None
         self.page_elements = []
+        self.db = db
 
     def set_previous_page(self, page_class):
         self.previous_page_class = page_class
@@ -13,7 +14,7 @@ class BasePage(Frame):
     def goBack(self, *args, **kwargs):
         if self.previous_page_class:
             self.clear_p()
-            previous_page = self.previous_page_class(self.master)
+            previous_page = self.previous_page_class(self.master, self.db)
             previous_page.pack(expand=True, anchor='center')
 
     def clear_p(self, *args, **kwargs):

@@ -1,11 +1,12 @@
 from tkinter import *
+
 from gui.basePage import BasePage
-from gui.config import FONT
+from gui.config import FONT, TITLE_FONT
 
 
 class PreCarsPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, db=db, *args, **kwargs)
+        super().__init__(master, db, *args, **kwargs)
 
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
@@ -18,7 +19,7 @@ class PreCarsPage(BasePage):
         self.delete_car_btn = Button(self, text="Удалить машину из автопарка", font=FONT, command=self.deleteCar)
         self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
 
-        self.name_txt = Label(text=f"Автопарк", font=("Arial", 25))
+        self.name_txt = Label(text=f"Автопарк", font=TITLE_FONT)
         self.name_txt.pack(pady=40)
 
         elements = [self.all_cars_btn, self.free_cars_btn, self.find_car_btn, self.add_car_btn, self.delete_car_btn,
@@ -68,8 +69,8 @@ class PreCarsPage(BasePage):
 
 class AllCarsPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, db=db, *args, **kwargs)
-        page_name_txt = Label(self, text="Просмотр всех авто", font=("Arial", 25))
+        super().__init__(master, db, *args, **kwargs)
+        page_name_txt = Label(self, text="Просмотр всех авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
@@ -78,8 +79,8 @@ class AllCarsPage(BasePage):
 
 class FreeCarsPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, db=db, *args, **kwargs)
-        page_name_txt = Label(self, text="Просмотр свободных авто", font=("Arial", 25))
+        super().__init__(master, db, *args, **kwargs)
+        page_name_txt = Label(self, text="Просмотр свободных авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
@@ -88,8 +89,8 @@ class FreeCarsPage(BasePage):
 
 class FindCarPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, db=db, *args, **kwargs)
-        page_name_txt = Label(self, text="Найти авто", font=("Arial", 25))
+        super().__init__(master, db, *args, **kwargs)
+        page_name_txt = Label(self, text="Найти авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
         enter_brand = Label(self, text="Введите марку машин", font=FONT)
@@ -116,10 +117,10 @@ class FindCarPage(BasePage):
 
 class AddCarPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, db=db, *args, **kwargs)
+        super().__init__(master, db, *args, **kwargs)
         self.set_previous_page(PreCarsPage)
 
-        page_name_txt = Label(text="Добавление авто", font=("Arial", 25))
+        page_name_txt = Label(text="Добавление авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
@@ -154,10 +155,10 @@ class AddCarPage(BasePage):
 
 class AddModelPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, db=db, *args, **kwargs)
+        super().__init__(master, db, *args, **kwargs)
         self.set_previous_page(PreCarsPage)
 
-        page_name_txt = Label(text="Добавление модели авто", font=("Arial", 25))
+        page_name_txt = Label(text="Добавление модели авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
@@ -195,10 +196,10 @@ class AddModelPage(BasePage):
 
 class DeleteCarPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, db=db, *args, **kwargs)
+        super().__init__(master, db, *args, **kwargs)
         self.set_previous_page(PreCarsPage)
 
-        page_name_txt = Label(text="Удаление авто", font=("Arial", 25))
+        page_name_txt = Label(text="Удаление авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 

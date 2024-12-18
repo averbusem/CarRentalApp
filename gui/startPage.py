@@ -1,19 +1,23 @@
-from tkinter import *
 import tkinter.messagebox
+from tkinter import *
+
 from db.database import Database
 from gui.mainPage import MainPage
+
+from .config import FONT, TITLE_FONT
+
 
 class StartPage(Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.elements = []
-        self.greet_msg = Label(self, text="CarRentalApp", font=("Arial", 25))
-        self.login_text = Label(self, text="Ваш логин", font=("Arial", 14))
-        self.pass_text = Label(self, text="Ваш пароль", font=("Arial", 14))
-        self.login = Entry(self, font=("Arial", 14))
-        self.password = Entry(self, show='*', font=("Arial", 14))
+        self.greet_msg = Label(self, text="CarRentalApp", font=TITLE_FONT)
+        self.login_text = Label(self, text="Ваш логин", font=FONT)
+        self.pass_text = Label(self, text="Ваш пароль", font=FONT)
+        self.login = Entry(self, font=FONT)
+        self.password = Entry(self, show='*', font=FONT)
 
-        self.accept_button = Button(self, text="Войти", command=self.signIn, font=("Arial", 14))
+        self.accept_button = Button(self, text="Войти", command=self.signIn, font=FONT)
 
         self.elements += [self.login_text, self.login, self.pass_text, self.password, self.accept_button]
 

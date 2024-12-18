@@ -4,17 +4,14 @@ from gui.basePage import BasePage
 from gui.carPages import PreCarsPage
 from gui.clearingPages import PreClearingPage
 from gui.clientPages import PreClientsPage
-from gui.config import FONT
+from gui.config import FONT, TITLE_FONT
 from gui.orderPages import CloseOrderPage, NewOrderPage, PreOrdersPage
 
 
 class MainPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         # Передаем объект базы данных (db) и передаем его в родительский класс
-        super().__init__(master, *args, **kwargs)
-
-        # Сохраняем объект базы данных для дальнейшего использования
-        self.db = db
+        super().__init__(master, db, *args, **kwargs)
 
         self.create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.goToNewOrder)
         self.close_order_btn = Button(self, text="Закрыть заказ", font=FONT, command=self.goToClosingOrder)
@@ -23,7 +20,7 @@ class MainPage(BasePage):
         self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars)
         self.clients_btn = Button(self, text="Клиенты", font=FONT, command=self.goToClients)
 
-        self.earnings_txt = Label(text=f"Выручка:\n\n\n${0}", font=("Arial", 25))
+        self.earnings_txt = Label(text=f"Выручка:\n\n\n${0}", font=TITLE_FONT)
 
         self.earnings_txt.pack(side=LEFT, padx=260)
 
@@ -69,6 +66,6 @@ class MainPage(BasePage):
 class JustTestPage(BasePage):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        greet_msg = Label(self, text="CarRentalApp", font=("Arial", 25))
+        greet_msg = Label(self, text="CarRentalApp", font=TITLE_FONT)
 
         greet_msg.pack(pady=50)

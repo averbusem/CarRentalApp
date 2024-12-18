@@ -1,14 +1,13 @@
-from tkinter import Button, Label, Entry
-from gui.basePage import BasePage
-from gui.config import FONT
 import logging
+from tkinter import Button, Entry, Label
+
+from gui.basePage import BasePage
+from gui.config import FONT, TITLE_FONT
 
 
 class PreClientsPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем db в экземпляре класса
-
+        super().__init__(master, db, *args, **kwargs)
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
@@ -18,7 +17,7 @@ class PreClientsPage(BasePage):
         self.delete_client_btn = Button(self, text="Удалить клиента", font=FONT, command=self.deleteClient)
         self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
 
-        self.name_txt = Label(text=f"Клиенты", font=("Arial", 25))
+        self.name_txt = Label(text=f"Клиенты", font=TITLE_FONT)
         self.name_txt.pack(pady=40)
 
         elements = [self.all_clients_btn, self.find_client_btn, self.add_client_btn, self.delete_client_btn,
@@ -55,10 +54,9 @@ class PreClientsPage(BasePage):
 
 class ClientsListPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем db
+        super().__init__(master, db, *args, **kwargs)
 
-        page_name_txt = Label(self, text="Список клиентов", font=("Arial", 25))
+        page_name_txt = Label(self, text="Список клиентов", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
@@ -67,10 +65,9 @@ class ClientsListPage(BasePage):
 
 class FindClientPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем db
+        super().__init__(master, db, *args, **kwargs)
 
-        page_name_txt = Label(self, text="Найти информацию о клиенте", font=("Arial", 25))
+        page_name_txt = Label(self, text="Найти информацию о клиенте", font=TITLE_FONT)
         page_name_txt.pack(pady=120)
 
         enter_info = Label(self, text="Введите паспорт или почту", font=FONT)
@@ -93,12 +90,11 @@ class FindClientPage(BasePage):
 
 class AddClientPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем db
+        super().__init__(master, db, *args, **kwargs)
 
         self.set_previous_page(PreClientsPage)
 
-        page_name_txt = Label(text="Добавление клиента", font=("Arial", 25))
+        page_name_txt = Label(text="Добавление клиента", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
@@ -153,12 +149,11 @@ class AddClientPage(BasePage):
 
 class DeleteClientPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.db = db  # Сохраняем db
+        super().__init__(master, db, *args, **kwargs)
 
         self.set_previous_page(PreClientsPage)
 
-        page_name_txt = Label(text="Удаление клиента", font=("Arial", 25))
+        page_name_txt = Label(text="Удаление клиента", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
