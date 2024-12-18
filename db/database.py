@@ -1,35 +1,35 @@
 import psycopg2
 import psycopg2.extras as extras
 
-from .config import DATABASE_CONFIG_ADMIN, DATABASE_CONFIG_OWNER
 from .error_handler import DatabaseErrorHandler
 
 
 class Database:
-    def __init__(self, role="admin"):
+    def __init__(self, user: str, password: str):
+        self.user = user
+        self.password = password
         """
-        Initialize database connection based on the role.
-        :param role: 'admin' or 'owner'
+        Initialize database connection based on dynamic user credentials.
+        :param user: Database username.
+        :param password: Database password.
         """
         self.error_handler = DatabaseErrorHandler()
-        self.config = self._get_config_for_role(role)
+        self.config = {
+            "dbname": "car_rental",
+            "user": user,
+            "password": password,
+            "host": "localhost",
+            "port": "5432",
+        }
 
         try:
             self.connection = psycopg2.connect(**self.config)
             self.connection.autocommit = True  # Enable auto-commit
-            print(f"Database connection successful (Role: {role})")
+            print(f"Database connection successful (User: {user})")
         except Exception as e:
             self.error_handler.log_error("Database connection failed", e)
             raise
 
-    def _get_config_for_role(self, role):
-        """Retrieve database configuration based on the role."""
-        if role == "admin":
-            return DATABASE_CONFIG_ADMIN
-        elif role == "owner":
-            return DATABASE_CONFIG_OWNER
-        else:
-            raise ValueError("Invalid role. Choose 'admin' or 'owner'.")
 
     def get_all_customers(self):
         """Retrieve all customers using get_all_customers() function."""

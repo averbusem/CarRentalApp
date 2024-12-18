@@ -1,8 +1,8 @@
 import tkinter.messagebox
 from tkinter import *
 from tkinter.messagebox import showinfo
-
-from gui.config import FONT, PASS, USER
+from db.database import Database
+from gui.config import FONT
 from gui.mainPage import MainPage
 
 
@@ -27,13 +27,18 @@ class StartPage(Frame):
         greet_msg.pack(pady=50)
         [x.pack(pady=10) for x in elements]
 
-
     def signIn(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Уверены?", message="Уверены в корректности данных?"):
-            if self.login.get() == USER and self.password.get() == PASS:
-                tkinter.messagebox.showinfo(title="Отлично", message="Вы успешно вошли в профиль!")
+            username = self.login.get()
+            password = self.password.get()
+            try:
+                # Создаём объект базы данных
+                db_instance = Database(user=username, password=password)
+                tkinter.messagebox.showinfo(title="Успех", message="Вы успешно вошли в систему!")
+
+                # Переходим на главную страницу, передавая объект базы данных
                 self.forget()
-                main_page = MainPage(self.master)
+                main_page = MainPage(self.master, db=db_instance)
                 main_page.pack(expand=True)
-            else:
-                tkinter.messagebox.showerror(title="Ошибка", message="Проверьте корректность введённых данных!")
+            except Exception as e:
+                tkinter.messagebox.showerror(title="Ошибка", message="Неверные данные для входа!")

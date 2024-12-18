@@ -1,3 +1,1 @@
-from db.database import Database
-
-db = Database()
+from .database import Database

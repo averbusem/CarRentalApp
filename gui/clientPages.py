@@ -1,6 +1,7 @@
 from tkinter import *
 
-from db import db
+from db.database import Database as db
+
 from gui.basePage import BasePage
 from gui.config import FONT
 import logging
