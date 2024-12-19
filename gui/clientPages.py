@@ -1,6 +1,7 @@
 import logging
 import tkinter.messagebox
 from tkinter import Button, Entry, Label
+import re
 
 from gui.basePage import BasePage
 from gui.config import FONT, TITLE_FONT
@@ -53,15 +54,63 @@ class PreClientsPage(BasePage):
         delete_client_page.pack(expand=True, anchor="center")
 
 
+from tkinter import Canvas, Frame, Scrollbar, Label
+from gui.basePage import BasePage
+from gui.config import FONT, TITLE_FONT
+
 class ClientsListPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
+        self.set_previous_page(PreClientsPage)
 
-        page_name_txt = Label(self, text="Список клиентов", font=TITLE_FONT)
-        page_name_txt.pack(pady=30)
+        self.title_label = Label(self, text="Список всех клиентов", font=TITLE_FONT)
+        self.title_label.pack(pady=20)
 
-        back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
-        back_btn.pack()
+        # Обертка для прокручиваемой области
+        self.scroll_frame = Frame(self)
+        self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Canvas для прокрутки (занимает половину ширины приложения)
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        # Scrollbar
+        self.scrollbar = Scrollbar(self.scroll_frame, orient="vertical", command=self.canvas.yview)
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        # Внутренний Frame для размещения содержимого
+        self.inner_frame = Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
+
+        # Загрузка данных клиентов
+        self.load_clients()
+
+        # Настройка прокрутки
+        self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+
+        self.back_button = Button(self, text="Назад", font=FONT, command=self.goBack)
+        self.back_button.pack(pady=20)
+
+    def load_clients(self):
+        clients = self.db.get_all_customers()
+        if not clients:
+            no_data_label = Label(self.inner_frame, text="Нет данных о клиентах.", font=FONT)
+            no_data_label.pack(pady=10)
+            return
+
+        # Отображение клиентов в виде списка
+        for i, client in enumerate(clients, start=1):
+            client_info = (f"{i}. {client['passport_number']} - "
+                           f"{client['middle_name']} {client['first_name']} {client['last_name']} - "
+                           f"{client['email']} - {client['phone_number']}")
+            client_label = Label(self.inner_frame, text=client_info, font=FONT, anchor="w", justify="left")
+            client_label.pack(fill="x", padx=10, pady=5)
+
+    def _on_mouse_wheel(self, event):
+        """Обрабатывает прокрутку колесиком мыши."""
+        self.canvas.yview_scroll(-1 * (event.delta // 120), "units")
 
 
 class FindClientPage(BasePage):
@@ -99,12 +148,12 @@ class AddClientPage(BasePage):
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
-        enter_passport = Label(self, text="Введите паспорт клиента", font=FONT)
-        enter_name = Label(self, text="Введите имя клиента", font=FONT)
-        enter_middle_name = Label(self, text="Введите фамилию клиента", font=FONT)
-        enter_last_name = Label(self, text="Введите отчество клиента", font=FONT)
-        enter_email = Label(self, text="Введите почту клиента", font=FONT)
-        enter_number = Label(self, text="Введите номер телефона клиента", font=FONT)
+        enter_passport = Label(self, text="Введите паспорт клиента (10 символов)", font=FONT)
+        enter_name = Label(self, text="Введите имя клиента (пример: Иван)", font=FONT)
+        enter_middle_name = Label(self, text="Введите фамилию клиента (пример: Иванов)", font=FONT)
+        enter_last_name = Label(self, text="Введите отчество клиента (пример: Иванович)", font=FONT)
+        enter_email = Label(self, text="Введите почту клиента (пример: example@mail.ru)", font=FONT)
+        enter_number = Label(self, text="Введите номер телефона клиента (11 символов)", font=FONT)
 
         self.passport_field = Entry(self, font=FONT)
         self.name_field = Entry(self, font=FONT)
@@ -136,8 +185,14 @@ class AddClientPage(BasePage):
             self.number_field.get().strip()
         ]
 
-        if any(not field for field in client_info):
-            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+        if not (len(client_info[0]) == 10 and client_info[0].isdigit() and #корректность паспорта
+                client_info[1].isalpha() and client_info[1].istitle() and #корректность ФИО
+                client_info[2].isalpha() and client_info[2].istitle() and
+                client_info[3].isalpha() and client_info[3].istitle() and
+                re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", client_info[4]) and #корректность почты
+                re.match(r"^\+?[0-9]{11}$", client_info[5]) and #корректность телефона
+                all(field for field in client_info)): #если заполненны все поля
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
             return
 
         try:
