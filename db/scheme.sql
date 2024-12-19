@@ -1,29 +1,40 @@
 -- Создание базы данных и выделенного пользователя
-CREATE DATABASE car_rental;
+-- CREATE DATABASE car_rental;
 
 -- Подключаемся к базе данных
-\c car_rental;
+-- \c car_rental;
 
--- Создаем пользователя с ограниченными правами
-CREATE USER admin WITH PASSWORD 'admin';
+-- Проверяем, существует ли роль "admin"
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'admin') THEN
+        -- Создаем роль "admin", если она еще не существует
+        CREATE USER admin WITH PASSWORD 'admin';
+        RAISE NOTICE 'Роль "admin" успешно создана.';
+    ELSE
+        RAISE NOTICE 'Роль "admin" уже существует.';
+    END IF;
+END
+$$;
 
--- 1. Создание роли owner
-CREATE ROLE owner WITH LOGIN PASSWORD 'owner_password';
+-- Проверяем, существует ли роль "owner"
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'owner') THEN
+        -- Создаем роль "owner", если она еще не существует
+        CREATE ROLE owner WITH LOGIN PASSWORD 'owner';
+        RAISE NOTICE 'Роль "owner" успешно создана.';
+    ELSE
+        RAISE NOTICE 'Роль "owner" уже существует.';
+    END IF;
+END
+$$;
 
--- 2. Назначение прав роли owner
--- Полный доступ к базе данных
+-- Назначение прав роли "owner"
 GRANT ALL PRIVILEGES ON DATABASE car_rental TO owner;
-
--- Полный доступ к схеме public
 GRANT ALL PRIVILEGES ON SCHEMA public TO owner;
-
--- Полные права на все таблицы
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO owner;
-
--- Полные права на все последовательности (SERIAL, IDENTITY)
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO owner;
-
--- Полные права на все функции
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO owner;
 
 -- Разрешить роли создавать базы данных
@@ -32,7 +43,7 @@ ALTER ROLE owner CREATEDB;
 -- Разрешить роли создавать других пользователей
 ALTER ROLE owner CREATEROLE;
 
--- Разрешить роли входить в систему (если это не указано)
+-- Разрешить роли входить в систему
 ALTER ROLE owner LOGIN;
 
 -- Установка привилегий для будущих объектов
@@ -43,10 +54,10 @@ GRANT ALL PRIVILEGES ON SEQUENCES TO owner;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
 GRANT ALL PRIVILEGES ON FUNCTIONS TO owner;
 
--- 3. Ограничение, чтобы роль не стала суперпользователем
+-- Ограничение, чтобы роль не стала суперпользователем
 ALTER ROLE owner NOSUPERUSER;
 
--- 4. Установка роли по умолчанию для подключения к базе данных
+-- Установка роли по умолчанию для подключения к базе данных
 ALTER DATABASE car_rental OWNER TO owner;
 
 
