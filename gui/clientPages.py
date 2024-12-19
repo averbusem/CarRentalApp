@@ -135,7 +135,52 @@ class FindClientPage(BasePage):
         back_btn.pack(pady=15)
 
     def findClient(self, *args, **kwargs):
-        pass
+        """Ищет клиента по паспорту или почте."""
+        client_info = self.page_elements[1].get().strip()  # Получаем введённое значение из Entry
+        print(client_info)
+
+        if not client_info:
+            tkinter.messagebox.showwarning(title="Внимание!", message="Поле поиска не может быть пустым!")
+            return
+
+        # Проверка формата паспорта или почты
+        is_passport = client_info.isdigit() and len(client_info) == 10
+        is_email = re.match(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", client_info)
+
+        if not (is_passport or is_email):
+            tkinter.messagebox.showwarning(
+                title="Ошибка!",
+                message="Введите корректный номер паспорта (10 цифр) или email в правильном формате."
+            )
+            return
+
+        try:
+            # Получение информации о клиенте из базы данных
+            client = self.db.find_customer_by_passport_or_email(client_info)
+            if not client:
+                tkinter.messagebox.showinfo(
+                    title="Результат поиска",
+                    message="Клиент с указанными данными не найден."
+                )
+                return
+
+            # Отображение информации о клиенте
+            client_data = (
+                f"Паспорт: {client['passport_number']}\n"
+                f"ФИО: {client['middle_name']} {client['first_name']} {client['last_name']}\n"
+                f"Email: {client['email']}\n"
+                f"Телефон: {client['phone_number']}"
+            )
+            tkinter.messagebox.showinfo(
+                title="Информация о клиенте",
+                message=client_data
+            )
+        except Exception as e:
+            logging.error(f"Ошибка при поиске клиента: {e}")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при поиске клиента. Проверьте корректность данных и повторите попытку."
+            )
 
 
 class AddClientPage(BasePage):
