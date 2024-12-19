@@ -1,4 +1,5 @@
 import logging
+import tkinter.messagebox
 from tkinter import Button, Entry, Label
 
 from gui.basePage import BasePage
@@ -136,15 +137,15 @@ class AddClientPage(BasePage):
         ]
 
         if any(not field for field in client_info):
-            print("Error: Все поля должны быть заполнены!")
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
             return
 
         try:
             self.db.add_customer(client_info[0], client_info[1], client_info[2], client_info[3], client_info[4], client_info[5])
-            print("Клиент успешно добавлен!")
+            tkinter.messagebox.showinfo(title="Успешно!", message="Клиент успешно добавлен!")
         except Exception as e:
             logging.error(f"Ошибка при добавлении клиента: {e}")
-            print("Не удалось добавить клиента. Проверьте корректность данных.")
+            tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось добавить клиента. Проверьте корректность данных.")
 
 
 class DeleteClientPage(BasePage):
@@ -172,4 +173,16 @@ class DeleteClientPage(BasePage):
         back_btn.pack(pady=10)
 
     def deleteClient(self):
-        pass
+        client_info = self.email_field.get().strip()
+
+        if not client_info:
+            tkinter.messagebox.showwarning(title="Внимательнее!", message="Должны быть заполнены все поля!")
+            return
+
+        try:
+            self.db.delete_customer_by_passport_or_email(client_info)
+            tkinter.messagebox.showinfo(title="Успешно!", message="Клиент успешно удалён!")
+        except Exception as e:
+            logging.error(f"Ошибка при добавлении клиента: {e}")
+            tkinter.messagebox.showerror(title="Ошибка!",
+                                         message="Не удалось добавить клиента. Проверьте корректность данных.")
