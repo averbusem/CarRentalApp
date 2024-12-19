@@ -164,6 +164,9 @@ class FindClientPage(BasePage):
                 )
                 return
 
+            # Получаем первый элемент списка
+            client = client[0]
+
             # Отображение информации о клиенте
             client_data = (
                 f"Паспорт: {client['passport_number']}\n"

@@ -164,9 +164,10 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY SELECT * FROM Customers
-    WHERE passport_number = search_value OR email = search_value;
+    WHERE Customers.passport_number = search_value OR Customers.email = search_value;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- 3. Добавить клиента
 CREATE OR REPLACE FUNCTION add_customer(
