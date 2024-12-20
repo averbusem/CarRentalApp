@@ -193,3 +193,133 @@ BEGIN
     DELETE FROM Customers WHERE passport_number = search_value OR email = search_value;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Таблица автопарк ===========================================================
+-- 1. Просмотр всех машин
+CREATE OR REPLACE FUNCTION get_all_cars()
+RETURNS TABLE (
+    vin_car CHAR(17),
+    brand_name VARCHAR(50),
+    model_name VARCHAR(50),
+    rental_cost DECIMAL(10, 2), -- Стоимость аренды стоит после model_name!
+    registration_number VARCHAR(9),
+    color VARCHAR(30),
+    car_status VARCHAR(20),
+    engine_volume DECIMAL(3, 1),
+    horsepower INT,
+    transmission VARCHAR(20)
+) AS $$
+BEGIN
+    RETURN QUERY SELECT
+        c.vin_car,
+        c.brand_name,
+        c.model_name,
+        m.rental_cost, -- Стоимость аренды стоит после model_name!
+        c.registration_number,
+        c.color,
+        c.car_status,
+        m.engine_volume,
+        m.horsepower,
+        m.transmission
+    FROM Cars c JOIN Models m
+    ON c.brand_name = m.brand_name AND c.model_name = m.model_name;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- 2. Просмотр свободных машин
+CREATE OR REPLACE FUNCTION get_all_available_cars()
+RETURNS TABLE (
+    vin_car CHAR(17),
+    brand_name VARCHAR(50),
+    model_name VARCHAR(50),
+    rental_cost DECIMAL(10, 2), -- Стоимость аренды
+    registration_number VARCHAR(9),
+    color VARCHAR(30),
+    car_status VARCHAR(20),
+    engine_volume DECIMAL(3, 1),
+    horsepower INT,
+    transmission VARCHAR(20)
+) AS $$
+BEGIN
+    RETURN QUERY SELECT
+        c.vin_car,
+        c.brand_name,
+        c.model_name,
+        m.rental_cost,
+        c.registration_number,
+        c.color,
+        c.car_status,
+        m.engine_volume,
+        m.horsepower,
+        m.transmission
+    FROM Cars c JOIN Models m
+    ON c.brand_name = m.brand_name AND c.model_name = m.model_name
+    WHERE c.car_status = 'available';
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+--3. Найти авто
+CREATE OR REPLACE FUNCTION find_cars(
+    p_brand_name VARCHAR(50),
+    p_model_name VARCHAR(50)
+)
+RETURNS TABLE (
+    vin_car CHAR(17),
+    brand_name VARCHAR(50),
+    model_name VARCHAR(50),
+    rental_cost DECIMAL(10, 2),
+    registration_number VARCHAR(9),
+    color VARCHAR(30),
+    car_status VARCHAR(20),
+    engine_volume DECIMAL(3, 1),
+    horsepower INT,
+    transmission VARCHAR(20)
+) AS $$
+BEGIN
+    RETURN QUERY SELECT
+        c.vin_car,
+        c.brand_name,
+        c.model_name,
+        m.rental_cost,
+        c.registration_number,
+        c.color,
+        c.car_status,
+        m.engine_volume,
+        m.horsepower,
+        m.transmission
+    FROM Cars c JOIN Models m
+    ON c.brand_name = m.brand_name AND c.model_name = m.model_name
+    WHERE c.brand_name = p_brand_name AND c.model_name = p_model_name;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+--4. Добавить авто
+CREATE OR REPLACE FUNCTION add_car(
+    p_vin_car CHAR(17),
+    p_registration_number VARCHAR(9),
+    p_brand_name VARCHAR(50),
+    p_model_name VARCHAR(50),
+    p_color VARCHAR(30)
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO Cars (vin_car, registration_number, brand_name, model_name, color, car_status)
+    VALUES (p_vin_car, p_registration_number, p_brand_name, p_model_name, p_color, 'available');
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+--5. Удалить авто
+CREATE OR REPLACE FUNCTION delete_car(p_vin_car CHAR(17))
+RETURNS VOID AS $$
+BEGIN
+    DELETE FROM Cars
+    WHERE vin_car = p_vin_car;
+END;
+$$ LANGUAGE plpgsql;

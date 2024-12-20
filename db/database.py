@@ -28,6 +28,16 @@ class Database:
             self.error_handler.log_error("Database connection failed", e)
             raise
 
+    def close_connection(self):
+        """Close the database connection."""
+        if self.connection:
+            try:
+                self.connection.close()
+                print("Database connection closed")
+            except Exception as e:
+                self.error_handler.log_error("Failed to close database connection", e)
+
+    # Функции для таблицы Customer ===========================================================
     def get_all_customers(self):
         """Retrieve all customers using get_all_customers() function."""
         query = "SELECT * FROM get_all_customers();"
@@ -72,11 +82,57 @@ class Database:
         except Exception as e:
             self.error_handler.log_error(f"Failed to delete customer with search_value: {search_value}", e)
 
-    def close_connection(self):
-        """Close the database connection."""
-        if self.connection:
-            try:
-                self.connection.close()
-                print("Database connection closed")
-            except Exception as e:
-                self.error_handler.log_error("Failed to close database connection", e)
+    # Функции для таблицы Cars ===========================================================
+    def get_all_cars(self):
+        """Retrieve all cars using get_all_cars() function."""
+        query = "SELECT * FROM get_all_cars();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
+            self.error_handler.log_error("Failed to get all cars", e)
+            return []
+
+    def get_all_available_cars(self):
+        """Retrieve all available cars using get_all_available_cars() function."""
+        query = "SELECT * FROM get_all_available_cars();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
+            self.error_handler.log_error("Failed to get available cars", e)
+            return []
+
+    def find_cars(self, brand_name: str, model_name: str):
+        """Find cars by brand and model."""
+        query = "SELECT * FROM find_cars(%s, %s);"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query, (brand_name, model_name))
+                return cursor.fetchall()
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to find cars: {brand_name} {model_name}", e)
+            return []
+
+    def add_car(self, vin_car: str, registration_number: str, brand_name: str, model_name: str, color: str):
+        """Add a new car."""
+        print(f"Attempting to add car: {vin_car}, {registration_number}, {brand_name}, {model_name}, {color}")
+        query = "SELECT add_car(%s, %s, %s, %s, %s);"
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (vin_car, registration_number, brand_name, model_name, color))
+                print("Car added successfully")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to add car {vin_car}", e)
+
+    def delete_car(self, vin_car: str):
+        """Delete a car by VIN."""
+        query = "SELECT delete_car(%s);"
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (vin_car,))
+                print("Car deleted successfully")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to delete car with VIN: {vin_car}", e)
