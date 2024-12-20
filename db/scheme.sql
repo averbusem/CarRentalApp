@@ -109,22 +109,6 @@ CREATE TABLE Bookings (
 -- Создание индекса по текстовому полю (например, email в таблице Customers)
 CREATE INDEX idx_customers_email ON Customers (email);
 
--- Создание триггера для автоматического подсчета стоимости бронирования
-CREATE OR REPLACE FUNCTION calculate_booking_cost()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.cost = (SELECT rental_cost * (NEW.end_date - NEW.start_date) FROM Cars c
-                JOIN Models m ON c.brand_name = m.brand_name AND c.model_name = m.model_name
-                WHERE c.vin_car = NEW.vin_car);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trg_calculate_booking_cost
-BEFORE INSERT OR UPDATE ON Bookings
-FOR EACH ROW
-EXECUTE FUNCTION calculate_booking_cost();
-
 -- Предоставление прав пользователю car_user
 GRANT CONNECT ON DATABASE car_rental TO admin;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;
@@ -321,5 +305,123 @@ RETURNS VOID AS $$
 BEGIN
     DELETE FROM Cars
     WHERE vin_car = p_vin_car;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Таблица заказы ===========================================================
+--1. Посмотреть все заказы
+CREATE OR REPLACE FUNCTION get_all_bookings()
+RETURNS TABLE (
+    vin_car CHAR(17),
+    passport_number CHAR(10),
+    first_name VARCHAR(50),
+    middle_name VARCHAR(50),
+    cost DECIMAL(10, 2),
+    booking_status VARCHAR(20),
+    start_date DATE,
+    end_date DATE
+) AS $$
+BEGIN
+    RETURN QUERY SELECT
+        b.vin_car,
+        c.passport_number,
+        c.first_name,
+        c.middle_name,
+        b.cost,
+        b.booking_status,
+        b.start_date,
+        b.end_date
+    FROM Customers c JOIN Bookings b
+    ON c.passport_number = b.passport_number;
+END;
+$$ LANGUAGE plpgsql;
+
+
+--2. Посмотреть действующие заказы
+CREATE OR REPLACE FUNCTION get_active_bookings()
+RETURNS TABLE (
+    vin_car CHAR(17),
+    passport_number CHAR(10),
+    first_name VARCHAR(50),
+    middle_name VARCHAR(50),
+    cost DECIMAL(10, 2),
+    booking_status VARCHAR(20),
+    start_date DATE,
+    end_date DATE
+) AS $$
+BEGIN
+    RETURN QUERY SELECT
+        b.vin_car,
+        c.passport_number,
+        c.first_name,
+        c.middle_name,
+        b.cost,
+        b.booking_status,
+        b.start_date,
+        b.end_date
+    FROM Customers c JOIN Bookings b
+    ON c.passport_number = b.passport_number;
+    WHERE b.booking_status = 'active';
+END;
+$$ LANGUAGE plpgsql;
+
+
+--3. Создать заказ
+CREATE OR REPLACE FUNCTION create_booking(
+    p_passport_number CHAR(10),
+    p_vin_car CHAR(17),
+    p_start_date DATE,
+    p_end_date DATE
+)
+RETURNS VOID AS $$
+BEGIN
+    --(стоимость будет вычисляться триггером)
+    INSERT INTO Bookings (passport_number, vin_car, start_date, end_date)
+    VALUES (p_passport_number, p_vin_car, p_start_date, p_end_date);
+
+    -- Обновляем статус автомобиля на 'unavailable'
+    UPDATE Cars SET car_status = 'unavailable'
+    WHERE vin_car = p_vin_car;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Создание триггера для автоматического подсчета стоимости бронирования
+CREATE OR REPLACE FUNCTION calculate_booking_cost()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.cost = (SELECT rental_cost * (NEW.end_date - NEW.start_date) FROM Cars c
+                JOIN Models m ON c.brand_name = m.brand_name AND c.model_name = m.model_name
+                WHERE c.vin_car = NEW.vin_car);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_calculate_booking_cost
+BEFORE INSERT OR UPDATE ON Bookings
+FOR EACH ROW
+EXECUTE FUNCTION calculate_booking_cost();
+
+
+--4. Закрыть заказ
+CREATE OR REPLACE FUNCTION close_booking(
+    p_passport_number CHAR(10),
+    p_vin_car CHAR(17)
+)
+RETURNS VOID AS $$
+BEGIN
+    -- Обновляем статус бронирования на 'completed'
+    UPDATE Bookings SET booking_status = 'completed'
+    WHERE passport_number = p_passport_number
+      AND vin_car = p_vin_car
+      AND booking_status = 'active'; -- Обновляем только активные бронирования
+
+    -- Обновляем статус автомобиля на 'available'
+    UPDATE Cars
+    SET car_status = 'available'
+    WHERE vin_car = p_vin_car
+      AND car_status = 'unavailable'; -- Обновляем только те автомобили, которые в данный момент недоступны
+
 END;
 $$ LANGUAGE plpgsql;

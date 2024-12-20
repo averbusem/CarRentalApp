@@ -136,3 +136,46 @@ class Database:
                 print("Car deleted successfully")
         except Exception as e:
             self.error_handler.log_error(f"Failed to delete car with VIN: {vin_car}", e)
+
+    # Функции для таблицы Bookings ===========================================================
+    def get_all_bookings(self):
+        """Retrieve all bookings using get_all_bookings() function."""
+        query = "SELECT * FROM get_all_bookings();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
+            self.error_handler.log_error("Failed to fetch all bookings", e)
+            return []
+
+    def get_active_bookings(self):
+        """Retrieve active bookings using get_active_bookings() function."""
+        query = "SELECT * FROM get_active_bookings();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
+            self.error_handler.log_error("Failed to fetch active bookings", e)
+            return []
+
+    def create_booking(self, passport_number, vin_car, start_date, end_date):
+        """Create a booking for a customer and update the car status to 'unavailable'."""
+        query = "SELECT create_booking(%s, %s, %s, %s);"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query, (passport_number, vin_car, start_date, end_date))
+                print(f"Booking created successfully for {passport_number} with car {vin_car}")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to create booking for {passport_number} with car {vin_car}", e)
+
+    def close_booking(self, passport_number, vin_car):
+        """Close a booking by updating its status to 'completed' and the car status to 'available'."""
+        query = "SELECT close_booking(%s, %s);"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query, (passport_number, vin_car))
+                print(f"Booking closed successfully for {passport_number} with car {vin_car}")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to close booking for {passport_number} with car {vin_car}", e)
