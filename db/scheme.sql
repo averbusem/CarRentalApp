@@ -3,6 +3,7 @@
 
 -- Подключаемся к базе данных
 -- \c car_rental;
+ALTER DATABASE car_rental OWNER TO db_creator;
 
 -- Проверяем, существует ли роль "admin"
 DO $$
@@ -22,7 +23,7 @@ DO $$
 BEGIN
     IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'owner') THEN
         -- Создаем роль "owner", если она еще не существует
-        CREATE ROLE owner WITH LOGIN PASSWORD 'owner';
+        CREATE ROLE owner WITH PASSWORD 'owner' LOGIN CREATEDB CREATEROLE NOSUPERUSER;
         RAISE NOTICE 'Роль "owner" успешно создана.';
     ELSE
         RAISE NOTICE 'Роль "owner" уже существует.';
@@ -31,34 +32,34 @@ END
 $$;
 
 -- Назначение прав роли "owner"
-GRANT ALL PRIVILEGES ON DATABASE car_rental TO owner;
-GRANT ALL PRIVILEGES ON SCHEMA public TO owner;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO owner;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO owner;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO owner;
+--GRANT ALL PRIVILEGES ON DATABASE car_rental TO owner;-----------------------------------------------------------------
+--GRANT ALL PRIVILEGES ON SCHEMA public TO owner;
+--GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO owner;
+--GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO owner;
+--GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO owner;
 
 -- Разрешить роли создавать базы данных
-ALTER ROLE owner CREATEDB;
+--ALTER ROLE owner CREATEDB;
 
 -- Разрешить роли создавать других пользователей
-ALTER ROLE owner CREATEROLE;
+--ALTER ROLE owner CREATEROLE;
 
 -- Разрешить роли входить в систему
-ALTER ROLE owner LOGIN;
+--ALTER ROLE owner LOGIN;
 
 -- Установка привилегий для будущих объектов
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-GRANT ALL PRIVILEGES ON TABLES TO owner;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-GRANT ALL PRIVILEGES ON SEQUENCES TO owner;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-GRANT ALL PRIVILEGES ON FUNCTIONS TO owner;
+--ALTER DEFAULT PRIVILEGES IN SCHEMA public
+--GRANT ALL PRIVILEGES ON TABLES TO owner;
+--ALTER DEFAULT PRIVILEGES IN SCHEMA public
+--GRANT ALL PRIVILEGES ON SEQUENCES TO owner;
+--ALTER DEFAULT PRIVILEGES IN SCHEMA public
+--GRANT ALL PRIVILEGES ON FUNCTIONS TO owner;
 
 -- Ограничение, чтобы роль не стала суперпользователем
-ALTER ROLE owner NOSUPERUSER;
+--ALTER ROLE owner NOSUPERUSER;
 
 -- Установка роли по умолчанию для подключения к базе данных
-ALTER DATABASE car_rental OWNER TO owner;
+-- ALTER DATABASE car_rental OWNER TO owner;
 
 
 -- Создание таблиц
