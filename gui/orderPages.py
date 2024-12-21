@@ -223,7 +223,7 @@ class NewOrderPage(BasePage):
         ]
 
         if not (order_info[0].isdigit() and len(order_info[0]) == 10 and # паспорт - число и длина равна 10
-                order_info[1].isdigit() and len(order_info[1]) == 17 and # VIN - число и длина равна 17
+                len(order_info[1]) == 17 and # VIN - длина равна 17
                 # добавить логику обработки дат
                 all(field for field in order_info)):
             tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
@@ -269,7 +269,7 @@ class CloseOrderPage(BasePage):
         order_info = [self.pass_field.get().strip(), self.car_field.get().strip()]
 
         if not (order_info[0].isdigit() and len(order_info[0]) == 10 and # паспорт - число длиной 10
-                order_info[1].isdigit() and len(order_info[1]) == 17 and # VIN - число длиной 17
+                len(order_info[1]) == 17 and # VIN - длиной 17
                 all(field for field in order_info)):
             tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
             return

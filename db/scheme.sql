@@ -1,66 +1,6 @@
--- Создание базы данных и выделенного пользователя
 -- CREATE DATABASE car_rental;
 
--- Подключаемся к базе данных
--- \c car_rental;
 ALTER DATABASE car_rental OWNER TO db_creator;
-
--- Проверяем, существует ли роль "admin"
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'admin') THEN
-        -- Создаем роль "admin", если она еще не существует
-        CREATE USER admin WITH PASSWORD 'admin';
-        RAISE NOTICE 'Роль "admin" успешно создана.';
-    ELSE
-        RAISE NOTICE 'Роль "admin" уже существует.';
-    END IF;
-END
-$$;
-
--- Проверяем, существует ли роль "owner"
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'owner') THEN
-        -- Создаем роль "owner", если она еще не существует
-        CREATE ROLE owner WITH PASSWORD 'owner' LOGIN CREATEDB CREATEROLE NOSUPERUSER;
-        RAISE NOTICE 'Роль "owner" успешно создана.';
-    ELSE
-        RAISE NOTICE 'Роль "owner" уже существует.';
-    END IF;
-END
-$$;
-
--- Назначение прав роли "owner"
---GRANT ALL PRIVILEGES ON DATABASE car_rental TO owner;-----------------------------------------------------------------
---GRANT ALL PRIVILEGES ON SCHEMA public TO owner;
---GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO owner;
---GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO owner;
---GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO owner;
-
--- Разрешить роли создавать базы данных
---ALTER ROLE owner CREATEDB;
-
--- Разрешить роли создавать других пользователей
---ALTER ROLE owner CREATEROLE;
-
--- Разрешить роли входить в систему
---ALTER ROLE owner LOGIN;
-
--- Установка привилегий для будущих объектов
---ALTER DEFAULT PRIVILEGES IN SCHEMA public
---GRANT ALL PRIVILEGES ON TABLES TO owner;
---ALTER DEFAULT PRIVILEGES IN SCHEMA public
---GRANT ALL PRIVILEGES ON SEQUENCES TO owner;
---ALTER DEFAULT PRIVILEGES IN SCHEMA public
---GRANT ALL PRIVILEGES ON FUNCTIONS TO owner;
-
--- Ограничение, чтобы роль не стала суперпользователем
---ALTER ROLE owner NOSUPERUSER;
-
--- Установка роли по умолчанию для подключения к базе данных
--- ALTER DATABASE car_rental OWNER TO owner;
-
 
 -- Создание таблиц
 CREATE TABLE Customers (
@@ -99,7 +39,7 @@ CREATE TABLE Bookings (
     vin_car CHAR(17), -- VIN номер (строго 17 символов)
     start_date DATE NOT NULL, -- Дата начала аренды
     end_date DATE NOT NULL, -- Дата окончания аренды
-    cost DECIMAL(10, 2), -- Итоговая стоимость аренды
+    cost DECIMAL(10, 2) DEFAULT 0.00, -- Итоговая стоимость аренды (будет вычисляться с помощью тригерра)
     booking_status VARCHAR(20) DEFAULT 'active', -- Статус бронирования (active или completed)
     FOREIGN KEY (passport_number) REFERENCES Customers (passport_number),
     FOREIGN KEY (vin_car) REFERENCES Cars (vin_car),
@@ -108,14 +48,6 @@ CREATE TABLE Bookings (
 
 -- Создание индекса по текстовому полю (например, email в таблице Customers)
 CREATE INDEX idx_customers_email ON Customers (email);
-
--- Предоставление прав пользователю car_user
-GRANT CONNECT ON DATABASE car_rental TO admin;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO admin;
-
-
-
 
 
 
@@ -504,3 +436,52 @@ BEGIN
     WHERE brand_name = p_brand_name AND model_name = p_model_name;
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+-- Проверяем, существует ли роль "owner"
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'owner') THEN
+        -- Создаем роль "owner", если она еще не существует
+        CREATE ROLE owner WITH PASSWORD 'owner' LOGIN CREATEDB CREATEROLE NOSUPERUSER;
+        RAISE NOTICE 'Роль "owner" успешно создана.';
+    ELSE
+        RAISE NOTICE 'Роль "owner" уже существует.';
+    END IF;
+END
+$$;
+
+-- Назначение прав роли "owner"
+GRANT ALL PRIVILEGES ON DATABASE car_rental TO owner;
+GRANT ALL PRIVILEGES ON SCHEMA public TO owner;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO owner;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO owner;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO owner;
+-- Установка привилегий для будущих объектов
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL PRIVILEGES ON TABLES TO owner;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL PRIVILEGES ON SEQUENCES TO owner;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL PRIVILEGES ON FUNCTIONS TO owner;
+
+
+-- Проверяем, существует ли роль "admin"
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'admin') THEN
+        -- Создаем роль "admin", если она еще не существует
+        CREATE USER admin WITH PASSWORD 'admin';
+        RAISE NOTICE 'Роль "admin" успешно создана.';
+    ELSE
+        RAISE NOTICE 'Роль "admin" уже существует.';
+    END IF;
+END
+$$;
+
+-- Предоставление прав пользователю car_user
+GRANT CONNECT ON DATABASE car_rental TO admin;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO admin;
+GRANT USAGE, SELECT ON SEQUENCE bookings_booking_id_seq TO admin;

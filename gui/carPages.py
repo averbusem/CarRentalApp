@@ -343,8 +343,8 @@ class AddCarPage(BasePage):
             self.color_field.get().strip()
         ]
 
-        if not (car_info[0].isdigit() and len(car_info[0]) == 17 and # если VIN это число и длина 17
-                len(car_info[1]) == 6 and car_info[1][1:4].isdigit() and car_info[1][0].isalpha() and car_info[1][4:6].isalpha() and # если номер соответствует А123АА
+        if not (len(car_info[0]) == 17 and # если длина VIN  17
+                len(car_info[1]) in {8, 9} and car_info[1][1:4].isdigit() and car_info[1][0].isalpha() and car_info[1][4:6].isalpha() and # если номер соответствует А123АА52 или А123АА152
                 len(car_info[2]) > 0 and len(car_info[3]) > 0 and len(car_info[4]) > 0 and car_info[4].isalpha() and  # если марка и модель - не числа
                 all(field for field in car_info)): #если не заполненны все поля
             tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
@@ -448,7 +448,7 @@ class DeleteCarPage(BasePage):
     def deleteCar(self):
         car_info = self.vin_field.get().strip()
 
-        if not (len(car_info) == 17 and car_info.isdigit() and car_info): # если длина VIN равна 17, это число и не пустая ячейка
+        if not (len(car_info) == 17 and car_info): # если длина VIN равна 17 и не пустая ячейка
             tkinter.messagebox.showwarning(title="Внимательнее!", message="Поле должно быть заполнено правильно!")
             return
 
