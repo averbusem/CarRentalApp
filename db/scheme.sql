@@ -439,6 +439,59 @@ $$ LANGUAGE plpgsql;
 
 
 
+-- Очистка базы данных ===========================================================
+--1. Очистить все таблицы
+CREATE OR REPLACE FUNCTION clear_all_tables()
+RETURNS VOID AS $$
+BEGIN
+    -- Очищаем таблицы в порядке их зависимости
+    TRUNCATE TABLE Bookings CASCADE;
+    TRUNCATE TABLE Cars CASCADE;
+    TRUNCATE TABLE Models CASCADE;
+    TRUNCATE TABLE Customers CASCADE;
+END;
+$$ LANGUAGE plpgsql;
+
+--2. Очистить таблицу cars
+CREATE OR REPLACE FUNCTION clear_cars_table()
+RETURNS VOID AS $$
+BEGIN
+    -- Удаляем автомобили, для которых нет активных бронирований
+    DELETE FROM Cars
+    WHERE vin_car NOT IN (
+        SELECT vin_car
+        FROM Bookings
+        WHERE booking_status = 'active'
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+--3. Очистить таблицу customers
+CREATE OR REPLACE FUNCTION clear_customers_table()
+RETURNS VOID AS $$
+BEGIN
+    -- Удаляем клиентов, у которых нет активных бронирований
+    DELETE FROM Customers
+    WHERE passport_number NOT IN (
+        SELECT passport_number
+        FROM Bookings
+        WHERE booking_status = 'active'
+    );
+END;
+$$ LANGUAGE plpgsql;
+
+--4. Очистить таблицу Bookings
+CREATE OR REPLACE FUNCTION clear_bookings_table()
+RETURNS VOID AS $$
+BEGIN
+    -- Удаляем завершённые заказы
+    DELETE FROM Bookings
+    WHERE booking_status = 'completed';
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 -- Проверяем, существует ли роль "owner"
 DO $$
 BEGIN

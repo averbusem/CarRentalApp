@@ -231,3 +231,44 @@ class Database:
                 print("Model cost modified successfully")
         except Exception as e:
             self.error_handler.log_error(f"Failed to change cost of model: {brand_name} {model_name} {cost}", e)
+
+    # Функции для очистки базы данных ===========================================================
+    def clear_all_tables(self):
+        """Clear all tables in the database by truncating them with CASCADE."""
+        query = "SELECT clear_all_tables();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                print("All tables have been cleared successfully")
+        except Exception as e:
+            self.error_handler.log_error("Failed to clear all tables", e)
+
+    def clear_cars_table(self):
+        """Clear the Cars table by deleting cars without active bookings."""
+        query = "SELECT clear_cars_table();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                print("Cars table cleared successfully")
+        except Exception as e:
+            self.error_handler.log_error("Failed to clear cars table", e)
+
+    def clear_customers_table(self):
+        """Clear the Customers table by deleting customers without active bookings."""
+        query = "SELECT clear_customers_table();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                print("Customers table cleared successfully")
+        except Exception as e:
+            self.error_handler.log_error("Failed to clear customers table", e)
+
+    def clear_bookings_table(self):
+        """Clear the Bookings table by deleting completed bookings."""
+        query = "SELECT clear_bookings_table();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                print("Bookings table cleared successfully")
+        except Exception as e:
+            self.error_handler.log_error("Failed to clear bookings table", e)
