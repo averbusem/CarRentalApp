@@ -226,15 +226,19 @@ class FindCarPage(BasePage):
 
     def findCars(self, *args, **kwargs):
         car_info = [self.brand_field.get().strip(), self.model_field.get().strip()]
-        self.clear_p()
-        found_cars_page = CarsBySearching(self.master, db=self.db, brand=car_info[0], model=car_info[1])
-        found_cars_page.pack(expand=True, anchor="center")
+        if car_info[0].isalpha() and car_info[1].isalpha():
+            self.clear_p()
+            found_cars_page = CarsBySearching(self.master, db=self.db, brand=car_info[0], model=car_info[1])
+            found_cars_page.pack(expand=True, anchor="center")
+        else:
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
+            return
 
 
 class CarsBySearching(BasePage):
     def __init__(self, master, db, brand, model, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(FindCarPage)
+        self.set_previous_page(PreCarsPage)
 
         page_name_txt = Label(self, text="Найденные авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -305,11 +309,11 @@ class AddCarPage(BasePage):
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
-        enter_vin = Label(self, text="Введите VIN авто", font=FONT)
-        enter_number = Label(self, text="Введите гос номер авто", font=FONT)
+        enter_vin = Label(self, text="Введите VIN авто (17 знаков)", font=FONT)
+        enter_number = Label(self, text="Введите гос номер авто (в формате А123АА)", font=FONT)
         enter_brand = Label(self, text="Введите марку авто", font=FONT)
         enter_model = Label(self, text="Введите модель авто", font=FONT)
-        enter_color = Label(self, text="Введите цвет машины", font=FONT)
+        enter_color = Label(self, text="Введите цвет машины (например, красный)", font=FONT)
 
         self.vin_field = Entry(self, font=FONT)
         self.number_field = Entry(self, font=FONT)
@@ -339,8 +343,11 @@ class AddCarPage(BasePage):
             self.color_field.get().strip()
         ]
 
-        if not all(field for field in car_info): #если не заполненны все поля
-            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+        if not (car_info[0].isdigit() and len(car_info[0]) == 17 and # если VIN это число и длина 17
+                len(car_info[1]) == 6 and car_info[1][1:4].isdigit() and car_info[1][0].isalpha() and car_info[1][4:6].isalpha() and # если номер соответствует А123АА
+                len(car_info[2]) > 0 and len(car_info[3]) > 0 and len(car_info[4]) > 0 and car_info[4].isalpha() and  # если марка и модель - не числа
+                all(field for field in car_info)): #если не заполненны все поля
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
             return
 
         try:
@@ -362,10 +369,10 @@ class AddModelPage(BasePage):
 
         enter_brand = Label(self, text="Введите марку", font=FONT)
         enter_model_name = Label(self, text="Введите название модели", font=FONT)
-        enter_eng_volume = Label(self, text="Введите объём двигателя", font=FONT)
+        enter_eng_volume = Label(self, text="Введите объём двигателя (например, 5.0)", font=FONT)
         enter_h_power = Label(self, text="Введите лошадинные силы авто", font=FONT)
         enter_transmission = Label(self, text="Введите КПП модели авто (мех, авто, робот)", font=FONT)
-        enter_price = Label(self, text="Введите стоимость за день проката", font=FONT)
+        enter_price = Label(self, text="Введите стоимость за день проката (например, 150.25)", font=FONT)
 
         self.brand_field = Entry(self, font=FONT)
         self.model_name_field = Entry(self, font=FONT)
@@ -398,7 +405,11 @@ class AddModelPage(BasePage):
             self.price_field.get().strip()
         ]
 
-        if not all(field for field in model_info): #если не заполненны все поля
+        # ОБНОВИТЬ ЛОГИКУ ПРОВЕРКИ ЦЕНЫ. СЕЙЧАС ОШИБКА В ДОБАВЛЕНИИ ИЗ-ЗА NUMERIC ТИПА В SQL
+
+        if not (len(model_info[0]) > 0 and len(model_info[1]) > 0 and
+                model_info[3].isdigit() and model_info[4].isalpha() and # если объём двигателя и мощность - числа
+                all(field for field in model_info)): # если заполнены все поля
             tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
             return
 
@@ -437,8 +448,8 @@ class DeleteCarPage(BasePage):
     def deleteCar(self):
         car_info = self.vin_field.get().strip()
 
-        if not car_info:
-            tkinter.messagebox.showwarning(title="Внимательнее!", message="Поле должно быть заполнено!")
+        if not (len(car_info) == 17 and car_info.isdigit() and car_info): # если длина VIN равна 17, это число и не пустая ячейка
+            tkinter.messagebox.showwarning(title="Внимательнее!", message="Поле должно быть заполнено правильно!")
             return
 
         try:

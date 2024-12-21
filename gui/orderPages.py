@@ -190,10 +190,10 @@ class NewOrderPage(BasePage):
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
-        enter_passport = Label(self, text="Введите паспорт клиента", font=FONT)
-        enter_car = Label(self, text="Введите VIN авто", font=FONT)
-        enter_booking_start_date = Label(self, text="Введите дату начала бронирования", font=FONT)
-        enter_booking_end_date = Label(self, text="Введите дату конца бронирования", font=FONT)
+        enter_passport = Label(self, text="Введите паспорт клиента (10 цифр)", font=FONT)
+        enter_car = Label(self, text="Введите VIN авто (17 цифр)", font=FONT)
+        enter_booking_start_date = Label(self, text="Введите дату начала бронирования (в формате DD.MM.YYYY)", font=FONT)
+        enter_booking_end_date = Label(self, text="Введите дату конца бронирования (в формате DD.MM.YYYY)", font=FONT)
 
         self.name_field = Entry(self, font=FONT)
         self.car_field = Entry(self, font=FONT)
@@ -222,8 +222,11 @@ class NewOrderPage(BasePage):
             self.booking_end_date.get().strip()
         ]
 
-        if not all(field for field in order_info):
-            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+        if not (order_info[0].isdigit() and len(order_info[0]) == 10 and # паспорт - число и длина равна 10
+                order_info[1].isdigit() and len(order_info[1]) == 17 and # VIN - число и длина равна 17
+                # добавить логику обработки дат
+                all(field for field in order_info)):
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
             return
 
         try:
@@ -265,8 +268,10 @@ class CloseOrderPage(BasePage):
     def closeOrder(self):
         order_info = [self.pass_field.get().strip(), self.car_field.get().strip()]
 
-        if not all(field for field in order_info):
-            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+        if not (order_info[0].isdigit() and len(order_info[0]) == 10 and # паспорт - число длиной 10
+                order_info[1].isdigit() and len(order_info[1]) == 17 and # VIN - число длиной 17
+                all(field for field in order_info)):
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены правильно!")
             return
 
         try:
