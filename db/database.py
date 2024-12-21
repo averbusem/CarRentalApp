@@ -179,3 +179,56 @@ class Database:
                 print(f"Booking closed successfully for {passport_number} with car {vin_car}")
         except Exception as e:
             self.error_handler.log_error(f"Failed to close booking for {passport_number} with car {vin_car}", e)
+
+    def get_all_models(self):
+        """Retrieve all cars using get_all_cars() function."""
+        query = "SELECT * FROM get_all_models();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                return cursor.fetchall()
+        except Exception as e:
+            self.error_handler.log_error("Failed to get all models", e)
+            return []
+
+    def find_model(self, brand_name: str, model_name: str):
+        """Find cars by brand and model."""
+        query = "SELECT * FROM find_model_by_brand_and_name(%s, %s);"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query, (brand_name, model_name))
+                return cursor.fetchall()
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to find model: {brand_name} {model_name}", e)
+            return []
+
+    def add_model(self, brand_name: str, model_name: str, eng_volume: str, power: str, trans: str, cost: str):
+        """Add a new car."""
+        print(f"Attempting to add model: {brand_name}, {model_name}, {eng_volume}, {power}, {trans}, {cost}")
+        query = "SELECT add_new_model(%s, %s, %s, %s, %s, %s);"
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (brand_name, model_name, eng_volume, power, trans, cost))
+                print("Model added successfully")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to add model {brand_name} {model_name}", e)
+
+    def delete_model(self, brand_name: str, model_name: str):
+        """Delete a car by VIN."""
+        query = "SELECT delete_model(%s, %s);"
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (brand_name, model_name))
+                print("Model deleted successfully")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to delete model: {brand_name} {model_name}", e)
+
+    def change_model_cost(self, brand_name: str, model_name: str, cost: str):
+        """Delete a car by VIN."""
+        query = "SELECT update_rental_cost(%s, %s, %s);"
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (brand_name, model_name, cost))
+                print("Model cost modified successfully")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to change cost of model: {brand_name} {model_name} {cost}", e)

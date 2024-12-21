@@ -1,4 +1,7 @@
+import logging
+import tkinter
 from tkinter import *
+from tkinter import messagebox
 
 from gui.basePage import BasePage
 from gui.config import FONT, TITLE_FONT
@@ -150,7 +153,24 @@ class AddCarPage(BasePage):
         back_btn.pack(pady=10)
 
     def addCar(self):
-        pass
+        car_info = [
+            self.vin_field.get().strip(),
+            self.number_field.get().strip(),
+            self.brand_field.get().strip(),
+            self.model_field.get().strip(),
+            self.color_field.get().strip()
+        ]
+
+        if not all(field for field in car_info): #если заполненны все поля
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+            return
+
+        try:
+            self.db.add_car(car_info[0], car_info[1], car_info[2], car_info[3], car_info[4])
+            tkinter.messagebox.showinfo(title="Успешно!", message="Машина успешно добавлена!")
+        except Exception as e:
+            logging.error(f"Ошибка при добавлении машины: {e}")
+            tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось добавить машину. Проверьте корректность данных.")
 
 
 class AddModelPage(BasePage):
@@ -166,7 +186,7 @@ class AddModelPage(BasePage):
         enter_model_name = Label(self, text="Введите название модели", font=FONT)
         enter_eng_volume = Label(self, text="Введите объём двигателя", font=FONT)
         enter_h_power = Label(self, text="Введите лошадинные силы авто", font=FONT)
-        enter_transmission = Label(self, text="Введите 0, если КПП автоматическая или 1, если КПП механическая", font=FONT)
+        enter_transmission = Label(self, text="Введите КПП модели авто (мех, авто, робот)", font=FONT)
         enter_price = Label(self, text="Введите стоимость за день проката", font=FONT)
 
         self.brand_field = Entry(self, font=FONT)
@@ -191,7 +211,26 @@ class AddModelPage(BasePage):
         back_btn.pack(pady=10)
 
     def addModel(self):
-        pass
+        model_info = [
+            self.brand_field.get().strip(),
+            self.model_name_field.get().strip(),
+            self.engine_volume.get().strip(),
+            self.power_field.get().strip(),
+            self.trans_field.get().strip(),
+            self.price_field.get().strip()
+        ]
+
+        if not all(field for field in model_info): #если заполненны все поля
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+            return
+
+        try:
+            self.db.add_model(model_info[0], model_info[1], model_info[2], model_info[3], model_info[4], model_info[5])
+            tkinter.messagebox.showinfo(title="Успешно!", message="Модель успешно добавлена!")
+        except Exception as e:
+            logging.error(f"Ошибка при добавлении модели: {e}")
+            tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось добавить модель. Проверьте корректность данных.")
+
 
 
 class DeleteCarPage(BasePage):
@@ -219,4 +258,16 @@ class DeleteCarPage(BasePage):
         back_btn.pack(pady=10)
 
     def deleteCar(self):
-        pass
+        car_info = self.vin_field.get().strip()
+
+        if not car_info:
+            tkinter.messagebox.showwarning(title="Внимательнее!", message="Поле должно быть заполнено!")
+            return
+
+        try:
+            self.db.delete_car(car_info)
+            tkinter.messagebox.showinfo(title="Успешно!", message="Машина успешно удалена!")
+        except Exception as e:
+            logging.error(f"Ошибка при удалении машины: {e}")
+            tkinter.messagebox.showerror(title="Ошибка!",
+                                         message="Не удалось удалить машину. Проверьте корректность данных.")

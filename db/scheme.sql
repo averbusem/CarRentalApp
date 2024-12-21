@@ -361,7 +361,7 @@ BEGIN
         b.start_date,
         b.end_date
     FROM Customers c JOIN Bookings b
-    ON c.passport_number = b.passport_number;
+    ON c.passport_number = b.passport_number
     WHERE b.booking_status = 'active';
 END;
 $$ LANGUAGE plpgsql;
@@ -423,5 +423,84 @@ BEGIN
     WHERE vin_car = p_vin_car
       AND car_status = 'unavailable'; -- Обновляем только те автомобили, которые в данный момент недоступны
 
+END;
+$$ LANGUAGE plpgsql;
+
+-- Таблица модели ===========================================================
+-- 1. Просмотр всех моделей
+CREATE OR REPLACE FUNCTION get_all_models()
+RETURNS TABLE (
+    brand_name VARCHAR(50),
+    model_name VARCHAR(50),
+    engine_volume DECIMAL(3, 1),
+    horsepower INT,
+    transmission VARCHAR(20),
+    rental_cost DECIMAL(10, 2)
+) AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM Models;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. Найти модель по марке и названию
+CREATE OR REPLACE FUNCTION find_model_by_brand_and_name(
+    p_brand_name VARCHAR(50),
+    p_model_name VARCHAR(50)
+)
+RETURNS TABLE (
+    brand_name VARCHAR(50),
+    model_name VARCHAR(50),
+    engine_volume DECIMAL(3, 1),
+    horsepower INT,
+    transmission VARCHAR(20),
+    rental_cost DECIMAL(10, 2)
+) AS $$
+BEGIN
+    RETURN QUERY SELECT * FROM Models
+    WHERE brand_name = p_brand_name AND model_name = p_model_name;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- 3. Добавить модель
+CREATE OR REPLACE FUNCTION add_new_model(
+    p_brand_name VARCHAR(50),
+    p_model_name VARCHAR(50),
+    p_engine_volume DECIMAL(3, 1),
+    p_horsepower INT,
+    p_transmission VARCHAR(20),
+    p_rental_cost DECIMAL(10, 2)
+)
+RETURNS VOID AS $$
+BEGIN
+    INSERT INTO Models (brand_name, model_name, engine_volume, horsepower, transmission, rental_cost)
+    VALUES (p_brand_name, p_model_name, p_engine_volume, p_horsepower, p_transmission, p_rental_cost);
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- 4. Удалить модель по марке и названию
+CREATE OR REPLACE FUNCTION delete_model(
+    p_brand_name VARCHAR(50),
+    p_model_name VARCHAR(50)
+)
+RETURNS VOID AS $$
+BEGIN
+    DELETE FROM Models
+    WHERE brand_name = p_brand_name AND model_name = p_model_name;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 5. Изменить стоимость аренды модели
+CREATE OR REPLACE FUNCTION update_rental_cost(
+    p_brand_name VARCHAR(50),
+    p_model_name VARCHAR(50),
+    p_new_rental_cost DECIMAL(10, 2)
+)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE Models
+    SET rental_cost = p_new_rental_cost
+    WHERE brand_name = p_brand_name AND model_name = p_model_name;
 END;
 $$ LANGUAGE plpgsql;
