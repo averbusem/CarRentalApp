@@ -13,34 +13,22 @@ class MainPage(BasePage):
         # Передаем объект базы данных (db) и передаем его в родительский класс
         super().__init__(master, db, *args, **kwargs)
 
-        self.create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.goToNewOrder)
-        self.close_order_btn = Button(self, text="Закрыть заказ", font=FONT, command=self.goToClosingOrder)
-        self.clearing_btn = Button(self, text="Чистка базы данных", font=FONT, command=self.goToClearing)
-        self.orders_btn = Button(self, text="Заказы", font=FONT, command=self.goToOrders)
-        self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars)
-        self.clients_btn = Button(self, text="Клиенты", font=FONT, command=self.goToClients)
+        self.clearing_btn = Button(self, text="Чистка базы данных", font=FONT, command=self.goToClearing, width=20)
+        self.orders_btn = Button(self, text="Заказы", font=FONT, command=self.goToOrders, width=20)
+        self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars, width=20)
+        self.clients_btn = Button(self, text="Клиенты", font=FONT, command=self.goToClients, width=20)
 
         self.earnings_txt = Label(text=f"Выручка:\n\n\n${0}", font=TITLE_FONT)
 
         self.earnings_txt.pack(side=LEFT, padx=260)
 
-        elements = [self.create_order_btn, self.close_order_btn, self.clearing_btn, self.orders_btn, self.cars_btn,
-                    self.clients_btn]
+        elements = [self.clearing_btn, self.orders_btn, self.cars_btn, self.clients_btn]
 
         self.page_elements += elements
         self.page_elements.append(self.earnings_txt)
 
         [x.pack(anchor='e', pady=20) for x in elements]
 
-    def goToNewOrder(self, *args, **kwargs):
-        self.clear_p()
-        new_order_p = NewOrderPage(self.master, self.db)  # Передаем db в NewOrderPage
-        new_order_p.pack(expand=True, anchor='center')
-
-    def goToClosingOrder(self, *args, **kwargs):
-        self.clear_p()
-        close_order_p = CloseOrderPage(self.master, self.db)  # Передаем db
-        close_order_p.pack(expand=True, anchor='center')
 
     def goToClearing(self, *args, **kwargs):
         self.clear_p()

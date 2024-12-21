@@ -12,11 +12,11 @@ class PreClearingPage(BasePage):
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
-        self.total_clearing_btn = Button(self, text="Очистка всей базы данных", font=FONT, command=self.totalClearing)
-        self.cars_clearing_btn = Button(self, text="Очистка автопарка", font=FONT, command=self.carsClearing)
-        self.clients_clearing_btn = Button(self, text="Очистка клиентской базы", font=FONT, command=self.clientsClearing)
-        self.orders_clearing_btn = Button(self, text="Очистка базы заказов", font=FONT, command=self.ordersClearing)
-        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+        self.total_clearing_btn = Button(self, text="Очистка всей базы данных", font=FONT, command=self.totalClearing, width=25)
+        self.cars_clearing_btn = Button(self, text="Очистка автопарка", font=FONT, command=self.carsClearing, width=25)
+        self.clients_clearing_btn = Button(self, text="Очистка клиентской базы", font=FONT, command=self.clientsClearing, width=25)
+        self.orders_clearing_btn = Button(self, text="Очистка базы заказов", font=FONT, command=self.ordersClearing, width=25)
+        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack, width=10)
 
         self.name_txt = Label(text=f"Очистка баз данных", font=TITLE_FONT)
         self.name_txt.pack(pady=40)

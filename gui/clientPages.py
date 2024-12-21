@@ -1,6 +1,6 @@
 import logging
 import tkinter.messagebox
-from tkinter import Button, Entry, Label
+from tkinter import Button, Entry, Label, Canvas, Frame, Scrollbar
 import re
 
 from gui.basePage import BasePage
@@ -13,11 +13,11 @@ class PreClientsPage(BasePage):
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
-        self.all_clients_btn = Button(self, text="Просмотр всех клиентов", font=FONT, command=self.listOfClients)
-        self.find_client_btn = Button(self, text="Найти клиента", font=FONT, command=self.findClient)
-        self.add_client_btn = Button(self, text="Добавить клиента", font=FONT, command=self.addClient)
-        self.delete_client_btn = Button(self, text="Удалить клиента", font=FONT, command=self.deleteClient)
-        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+        self.all_clients_btn = Button(self, text="Просмотр всех клиентов", font=FONT, command=self.listOfClients, width=20)
+        self.find_client_btn = Button(self, text="Найти клиента", font=FONT, command=self.findClient, width=20)
+        self.add_client_btn = Button(self, text="Добавить клиента", font=FONT, command=self.addClient, width=20)
+        self.delete_client_btn = Button(self, text="Удалить клиента", font=FONT, command=self.deleteClient, width=20)
+        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack, width=10)
 
         self.name_txt = Label(text=f"Клиенты", font=TITLE_FONT)
         self.name_txt.pack(pady=40)
@@ -52,11 +52,6 @@ class PreClientsPage(BasePage):
         delete_client_page = DeleteClientPage(self.master, self.db)  # Передаем db
         delete_client_page.set_previous_page(PreClientsPage)
         delete_client_page.pack(expand=True, anchor="center")
-
-
-from tkinter import Canvas, Frame, Scrollbar, Label
-from gui.basePage import BasePage
-from gui.config import FONT, TITLE_FONT
 
 class ClientsListPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):

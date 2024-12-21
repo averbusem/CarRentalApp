@@ -11,19 +11,33 @@ class PreOrdersPage(BasePage):
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
-        self.valid_orders_btn = Button(self, text="Просмотр действующих заказов", font=FONT, command=self.showOrdersNow)
-        self.all_orders_btn = Button(self, text="Просмотр всех заказов", font=FONT, command=self.showAllOrders)
-        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+
+        self.create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.goToNewOrder, width=27)
+        self.close_order_btn = Button(self, text="Закрыть заказ", font=FONT, command=self.goToClosingOrder, width=27)
+        self.valid_orders_btn = Button(self, text="Просмотр действующих заказов", font=FONT, command=self.showOrdersNow, width=27)
+        self.all_orders_btn = Button(self, text="Просмотр всех заказов", font=FONT, command=self.showAllOrders, width=27)
+        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack, width=10)
 
         self.name_txt = Label(text=f"Заказы", font=TITLE_FONT)
         self.name_txt.pack(pady=40)
 
-        elements = [self.valid_orders_btn, self.all_orders_btn, self.back_btn]
+        elements = [self.create_order_btn, self.close_order_btn, self.valid_orders_btn, self.all_orders_btn,
+                    self.back_btn]
 
         self.page_elements += elements
         self.page_elements.append(self.name_txt)
 
         [x.pack(pady=20) for x in elements]
+
+    def goToNewOrder(self, *args, **kwargs):
+        self.clear_p()
+        new_order_p = NewOrderPage(self.master, self.db)  # Передаем db в NewOrderPage
+        new_order_p.pack(expand=True, anchor='center')
+
+    def goToClosingOrder(self, *args, **kwargs):
+        self.clear_p()
+        close_order_p = CloseOrderPage(self.master, self.db)  # Передаем db
+        close_order_p.pack(expand=True, anchor='center')
 
     def showOrdersNow(self, *args, **kwargs):
         self.clear_p()
@@ -36,8 +50,6 @@ class PreOrdersPage(BasePage):
         all_orders_page = AllOrdersPage(self.master, self.db)  # Передаем db в AllOrdersPage
         all_orders_page.set_previous_page(PreOrdersPage)
         all_orders_page.pack(expand=True, anchor="center")
-
-
 
 class ValidOrdersPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
@@ -62,9 +74,7 @@ class AllOrdersPage(BasePage):
 class NewOrderPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-
-        from gui.mainPage import MainPage
-        self.set_previous_page(MainPage)
+        self.set_previous_page(PreOrdersPage)
 
         page_name_txt = Label(text="Создать новый заказ", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -101,9 +111,7 @@ class NewOrderPage(BasePage):
 class CloseOrderPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db,*args, **kwargs)
-
-        from gui.mainPage import MainPage
-        self.set_previous_page(MainPage)
+        self.set_previous_page(PreOrdersPage)
 
         page_name_txt = Label(text="Закрыть заказ", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
