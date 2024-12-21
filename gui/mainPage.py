@@ -5,7 +5,7 @@ from gui.carPages import PreCarsPage
 from gui.clearingPages import PreClearingPage
 from gui.clientPages import PreClientsPage
 from gui.config import FONT, TITLE_FONT
-from gui.orderPages import CloseOrderPage, NewOrderPage, PreOrdersPage
+from gui.orderPages import PreOrdersPage
 
 
 class MainPage(BasePage):

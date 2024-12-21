@@ -224,7 +224,6 @@ class Database:
             self.error_handler.log_error(f"Failed to delete model: {brand_name} {model_name}", e)
 
     def change_model_cost(self, brand_name: str, model_name: str, cost: str):
-        """Delete a car by VIN."""
         query = "SELECT update_rental_cost(%s, %s, %s);"
         try:
             with self.connection.cursor() as cursor:

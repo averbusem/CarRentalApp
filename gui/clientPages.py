@@ -1,7 +1,7 @@
 import logging
-import tkinter.messagebox
-from tkinter import Button, Entry, Label, Canvas, Frame, Scrollbar
 import re
+import tkinter.messagebox
+from tkinter import Button, Canvas, Entry, Frame, Label, Scrollbar
 
 from gui.basePage import BasePage
 from gui.config import FONT, TITLE_FONT

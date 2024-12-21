@@ -236,9 +236,6 @@ class CarsBySearching(BasePage):
         super().__init__(master, db, *args, **kwargs)
         self.set_previous_page(FindCarPage)
 
-        info = args
-        print(info)
-
         page_name_txt = Label(self, text="Найденные авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
@@ -342,7 +339,7 @@ class AddCarPage(BasePage):
             self.color_field.get().strip()
         ]
 
-        if not all(field for field in car_info): #если заполненны все поля
+        if not all(field for field in car_info): #если не заполненны все поля
             tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
             return
 
@@ -401,7 +398,7 @@ class AddModelPage(BasePage):
             self.price_field.get().strip()
         ]
 
-        if not all(field for field in model_info): #если заполненны все поля
+        if not all(field for field in model_info): #если не заполненны все поля
             tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
             return
 
@@ -411,7 +408,6 @@ class AddModelPage(BasePage):
         except Exception as e:
             logging.error(f"Ошибка при добавлении модели: {e}")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось добавить модель. Проверьте корректность данных.")
-
 
 
 class DeleteCarPage(BasePage):
@@ -453,45 +449,66 @@ class DeleteCarPage(BasePage):
             tkinter.messagebox.showerror(title="Ошибка!",
                                          message="Не удалось удалить машину. Проверьте корректность данных.")
 
-# class ChangePricePage(BasePage):
-#     def __init__(self, master, db, *args, **kwargs):
-#         super().__init__(master, db, *args, **kwargs)
-#         self.set_previous_page(PreCarsPage)
-#
-#         page_name_txt = Label(text="Изменение цены аренды", font=TITLE_FONT)
-#         page_name_txt.pack(pady=30)
-#         self.page_elements.append(page_name_txt)
-#
-#         enter_brand = Label(self, text="Введите марку авто", font=FONT)
-#         enter_model = Label(self, text="Введите модель авто", font=FONT)
-#         enter_price = Label(self, text="Введите новую стоимость аренды", font=FONT)
-#         self.brand_field = Entry(self, font=FONT)
-#         self.model_field = Entry(self, font=FONT)
-#         self.price_field = Entry(self, font=FONT)
-#
-#         elements = [enter_brand, self.brand_field]
-#
-#         self.page_elements += elements
-#
-#         [x.pack(pady=15) for x in elements]
-#
-#         change_price_btn = Button(self, text="Изменить стоимость аренды авто", font=FONT, command=self.changePrice)
-#         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
-#
-#         change_price_btn.pack(pady=10)
-#         back_btn.pack(pady=10)
-#
-#     def changePrice(self):
-#         car_info = self.vin_field.get().strip()
-#
-#         if not car_info:
-#             tkinter.messagebox.showwarning(title="Внимательнее!", message="Поле должно быть заполнено!")
-#             return
-#
-#         try:
-#             self.db.delete_car(car_info)
-#             tkinter.messagebox.showinfo(title="Успешно!", message="Машина успешно удалена!")
-#         except Exception as e:
-#             logging.error(f"Ошибка при удалении машины: {e}")
-#             tkinter.messagebox.showerror(title="Ошибка!",
-#                                          message="Не удалось удалить машину. Проверьте корректность данных.")
+class ChangePricePage(BasePage):
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db, *args, **kwargs)
+        self.set_previous_page(PreCarsPage)
+
+        page_name_txt = Label(self, text="Изменение цены аренды", font=TITLE_FONT)
+        page_name_txt.pack(pady=30)
+
+        # Метки и поля ввода
+        enter_brand = Label(self, text="Введите марку авто:", font=FONT)
+        enter_model = Label(self, text="Введите модель авто:", font=FONT)
+        enter_price = Label(self, text="Введите новую стоимость аренды:", font=FONT)
+
+        self.brand_field = Entry(self, font=FONT)
+        self.model_field = Entry(self, font=FONT)
+        self.price_field = Entry(self, font=FONT)
+
+        # enter_brand.pack(pady=15)
+        # self.brand_field.pack(pady=15)
+        #
+        # enter_model.pack(pady=15)
+        # self.model_field.pack(pady=15)
+        #
+        # enter_price.pack(pady=15)
+        # self.price_field.pack(pady=15)
+        #
+
+        elements = [enter_brand, self.brand_field, enter_model, self.model_field, enter_price, self.price_field]
+
+        self.page_elements += elements
+
+        [x.pack(pady=15) for x in elements]
+
+        change_price_btn = Button(self, text="Изменить стоимость аренды авто", font=FONT, command=self.changePrice)
+        back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+
+        change_price_btn.pack(pady=10)
+        back_btn.pack(pady=10)
+
+    def changePrice(self):
+        info = [self.brand_field.get().strip(), self.model_field.get().strip(), self.price_field.get().strip()]
+
+        # Проверка на заполненность полей
+        if not info[0] or not info[1] or not info[2]:
+            tkinter.messagebox.showwarning(title="Внимание!", message="Все поля должны быть заполнены!")
+            return
+
+        # Проверка корректности ввода цены
+        if not info[2].isdigit() or float(info[2]) <= 0:
+            tkinter.messagebox.showerror(title="Ошибка!", message="Цена должна быть положительным числом!")
+            return
+
+        try:
+            # Обновление цены в базе данных
+            updated_rows = self.db.change_model_cost(brand=info[0], model=info[1], new_price=info[2])
+
+            if updated_rows > 0:
+                tkinter.messagebox.showinfo(title="Успешно!", message="Стоимость аренды успешно обновлена!")
+            else:
+                tkinter.messagebox.showwarning(title="Не найдено!", message="Автомобиль с такими данными не найден.")
+        except Exception as e:
+            logging.error(f"Ошибка при обновлении цены аренды: {e}")
+            tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось обновить цену. Проверьте корректность данных.")

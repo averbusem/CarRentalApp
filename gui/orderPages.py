@@ -1,4 +1,7 @@
+import logging
+import tkinter
 from tkinter import *
+from tkinter import messagebox
 
 from gui.basePage import BasePage
 from gui.config import FONT, TITLE_FONT
@@ -54,22 +57,129 @@ class PreOrdersPage(BasePage):
 class ValidOrdersPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
+        self.set_previous_page(PreOrdersPage)
+
         page_name_txt = Label(self, text="Действующие заказы", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
+        # Обертка для прокручиваемой области
+        self.scroll_frame = Frame(self)
+        self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Canvas для прокрутки
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+                             height=self.master.winfo_screenheight() // 2.5)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        # Вертикальный Scrollbar
+        self.v_scrollbar = Scrollbar(self.scroll_frame, orient="vertical", command=self.canvas.yview)
+        self.v_scrollbar.pack(side="right", fill="y")
+        self.canvas.configure(yscrollcommand=self.v_scrollbar.set)
+
+        # Горизонтальный Scrollbar
+        self.h_scrollbar = Scrollbar(self.scroll_frame, orient="horizontal", command=self.canvas.xview)
+        self.h_scrollbar.pack(side="bottom", fill="x")
+        self.canvas.configure(xscrollcommand=self.h_scrollbar.set)
+
+        # Внутренний Frame для размещения содержимого
+        self.inner_frame = Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
+
+        # Загрузка данных о всех заказах
+        self.load_active_orders()
+
+        # Настройка прокрутки
+        self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
-        back_btn.pack()
+        back_btn.pack(pady=20)
+
+    def load_active_orders(self):
+        # Получаем список всех заказов
+        active_orders = self.db.get_active_bookings()
+        if not active_orders:
+            no_data_label = Label(self.inner_frame, text="Нет активных заказов.", font=FONT)
+            no_data_label.pack(pady=10)
+            return
+
+        # Отображение информации о свободных автомобилях
+        for i, order in enumerate(active_orders, start=1):
+            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - {order['end_date']} - "
+                        f"{order['cost']} - {order['booking_status']}")
+            order_label = Label(self.inner_frame, text=order_info, font=FONT, anchor="w", justify="left")
+            order_label.pack(fill="x", padx=10, pady=5)
+
+    def _on_mouse_wheel(self, event):
+        """Обрабатывает прокрутку колесиком мыши."""
+        if event.state == 0:  # Прокрутка вертикальная
+            self.canvas.yview_scroll(-1 * (event.delta // 120), "units")
+        elif event.state == 1:  # Прокрутка горизонтальная (при удержании Shift)
+            self.canvas.xview_scroll(-1 * (event.delta // 120), "units")
+
 
 class AllOrdersPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
+        self.set_previous_page(PreOrdersPage)
+
         page_name_txt = Label(self, text="Все заказы", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
+        # Обертка для прокручиваемой области
+        self.scroll_frame = Frame(self)
+        self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Canvas для прокрутки
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+                             height=self.master.winfo_screenheight() // 2.5)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        # Вертикальный Scrollbar
+        self.v_scrollbar = Scrollbar(self.scroll_frame, orient="vertical", command=self.canvas.yview)
+        self.v_scrollbar.pack(side="right", fill="y")
+        self.canvas.configure(yscrollcommand=self.v_scrollbar.set)
+
+        # Горизонтальный Scrollbar
+        self.h_scrollbar = Scrollbar(self.scroll_frame, orient="horizontal", command=self.canvas.xview)
+        self.h_scrollbar.pack(side="bottom", fill="x")
+        self.canvas.configure(xscrollcommand=self.h_scrollbar.set)
+
+        # Внутренний Frame для размещения содержимого
+        self.inner_frame = Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
+
+        # Загрузка данных о всех заказах
+        self.load_all_orders()
+
+        # Настройка прокрутки
+        self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
-        back_btn.pack()
+        back_btn.pack(pady=20)
 
+    def load_all_orders(self):
+        # Получаем список всех заказов
+        all_orders = self.db.get_all_bookings()
+        if not all_orders:
+            no_data_label = Label(self.inner_frame, text="Заказов еще не было.", font=FONT)
+            no_data_label.pack(pady=10)
+            return
 
+        # Отображение информации о свободных автомобилях
+        for i, order in enumerate(all_orders, start=1):
+            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - {order['end_date']} - "
+                        f"{order['cost']} - {order['booking_status']}")
+            order_label = Label(self.inner_frame, text=order_info, font=FONT, anchor="w", justify="left")
+            order_label.pack(fill="x", padx=10, pady=5)
+
+    def _on_mouse_wheel(self, event):
+        """Обрабатывает прокрутку колесиком мыши."""
+        if event.state == 0:  # Прокрутка вертикальная
+            self.canvas.yview_scroll(-1 * (event.delta // 120), "units")
+        elif event.state == 1:  # Прокрутка горизонтальная (при удержании Shift)
+            self.canvas.xview_scroll(-1 * (event.delta // 120), "units")
 
 class NewOrderPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
@@ -105,7 +215,23 @@ class NewOrderPage(BasePage):
 
     #функция создания заказа
     def createOrder(self):
-        pass
+        order_info = [
+            self.name_field.get().strip(),
+            self.car_field.get().strip(),
+            self.booking_start_date.get().strip(),
+            self.booking_end_date.get().strip()
+        ]
+
+        if not all(field for field in order_info):
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+            return
+
+        try:
+            self.db.create_booking(order_info[0], order_info[1], order_info[2], order_info[3])
+            tkinter.messagebox.showinfo(title="Успешно!", message="Заказ успешно создан!")
+        except Exception as e:
+            logging.error(f"Ошибка при создании заказа: {e}")
+            tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось создать заказ. Проверьте корректность данных.")
 
 
 class CloseOrderPage(BasePage):
@@ -117,13 +243,13 @@ class CloseOrderPage(BasePage):
         page_name_txt.pack(pady=30)
         self.page_elements.append(page_name_txt)
 
-        enter_car = Label(self, text="Введите VIN авто", font=FONT)
         enter_passport = Label(self, text="Введите паспорт клиента", font=FONT)
+        enter_car = Label(self, text="Введите VIN авто", font=FONT)
 
-        self.name_field = Entry(self, font=FONT)
+        self.pass_field = Entry(self, font=FONT)
         self.car_field = Entry(self, font=FONT)
 
-        elements = [enter_passport, self.name_field, enter_car, self.car_field]
+        elements = [enter_passport, self.pass_field, enter_car, self.car_field]
 
         self.page_elements += elements
 
@@ -135,7 +261,17 @@ class CloseOrderPage(BasePage):
         close_order.pack(pady=10)
         back_btn.pack(pady=10)
 
-
     #функция закрытия заказа
     def closeOrder(self):
-        pass
+        order_info = [self.pass_field.get().strip(), self.car_field.get().strip()]
+
+        if not all(field for field in order_info):
+            tkinter.messagebox.showwarning(title="Внимательнее", message="Все поля должны быть заполнены!")
+            return
+
+        try:
+            self.db.close_booking(order_info[0], order_info[1])
+            tkinter.messagebox.showinfo(title="Успешно!", message="Заказ успешно закрыт!")
+        except Exception as e:
+            logging.error(f"Ошибка при закрытии заказа: {e}")
+            tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось закрыть заказ. Проверьте корректность данных.")
