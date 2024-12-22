@@ -560,6 +560,11 @@ BEGIN
     PERFORM add_customer('6677889900', 'Алексей', 'Алексеевич', 'Алексеев', 'alex@example.com', '79994567890');
     PERFORM add_customer('5544332211', 'Дмитрий', 'Дмитриевич', 'Дмитриев', 'dmitry@example.com', '79995678901');
 
+    PERFORM add_customer('2233445566', 'Анна', 'Андреевна', 'Смирнова', 'anna@example.com', '79996789012');
+    PERFORM add_customer('7788990011', 'Мария', 'Ивановна', 'Кузнецова', 'maria@example.com', '79997890123');
+
+
+
     -- Добавление данных в таблицу Models
     PERFORM add_new_model('Toyota', 'Camry', 2.5, 203, 'Automatic', 5000.00);
     PERFORM add_new_model('Honda', 'Civic', 1.5, 174, 'CVT', 4000.00);
@@ -567,12 +572,24 @@ BEGIN
     PERFORM add_new_model('BMW', 'X5', 3.0, 335, 'Automatic', 7000.00);
     PERFORM add_new_model('Audi', 'A4', 2.0, 190, 'Automatic', 6000.00);
 
+    PERFORM add_new_model('Porsche', '911', 3.0, 450, 'Automatic', 12000.00);
+    PERFORM add_new_model('Lamborghini', 'Huracan', 5.2, 630, 'Automatic', 20000.00);
+
+
     -- Добавление данных в таблицу Cars
     PERFORM add_car('1HGCM82633A123456', 'A123BC777', 'Toyota', 'Camry', 'White');
     PERFORM add_car('2HGFG22551H567890', 'B456DE777', 'Toyota', 'Camry', 'Black');
     PERFORM add_car('1FAFP40412F123456', 'C789FG777', 'Ford', 'Mustang', 'Red');
     PERFORM add_car('5UXFG83557L123456', 'D012HI777', 'BMW', 'X5', 'Blue');
     PERFORM add_car('WAUZZZ8K0BA123456', 'E345JK777', 'Audi', 'A4', 'Silver');
+
+
+    PERFORM add_car('WP0AA299X6S123456', 'H123EX777', 'Porsche', '911', 'Silver');
+    PERFORM add_car('LP0AA299X6S654321', 'M456EX152', 'Porsche', '911', 'Black');
+    PERFORM add_car('ZHWUC1ZF6KLA12345', 'I123LM777', 'Lamborghini', 'Huracan', 'Yellow');
+    PERFORM add_car('AHWUC1ZF6KLA54321', 'K456LM152', 'Lamborghini', 'Huracan', 'Red');
+
+
 
     -- Добавление заказов
     PERFORM create_booking('1234567890', '1HGCM82633A123456', '2023-10-10', '2023-10-10');
