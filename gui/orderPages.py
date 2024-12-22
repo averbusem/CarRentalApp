@@ -66,7 +66,7 @@ class ValidOrdersPage(BasePage):
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Canvas для прокрутки
-        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 1.6,
                              height=self.master.winfo_screenheight() // 2.5)
         self.canvas.pack(side="left", fill="both", expand=True)
 
@@ -104,13 +104,16 @@ class ValidOrdersPage(BasePage):
                 return
 
             # Создаем виджет Text для отображения информации
-            orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
-                               height=15)
+            orders_text = Text(self.inner_frame, font=FONT, wrap="none", bg=self["bg"], bd=0, highlightthickness=0,
+                               height=25, width=600)
+
+            header = "0. Паспорт - VIN - Начало бронирования - Конец бронирования - Итоговая стоимость - Статус\n\n"
+            orders_text.insert("end", header)
 
             # Добавляем информацию о заказах в Text
             for i, order in enumerate(active_orders, start=1):
                 order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
-                              f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
+                              f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n\n")
                 orders_text.insert("end", order_info)
 
             orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
@@ -121,7 +124,7 @@ class ValidOrdersPage(BasePage):
 
             # Размещение виджетов
             scrollbar.pack(side="right", fill="y")
-            orders_text.pack(fill="both", padx=10, pady=5)
+            orders_text.pack(fill="both", padx=15, pady=5)
         except Exception as e:
             logging.error("Failed to load active orders from the database.", exc_info=e)
             print("Failed to load active orders from the database.")
@@ -151,7 +154,7 @@ class AllOrdersPage(BasePage):
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Canvas для прокрутки
-        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 1.6,
                              height=self.master.winfo_screenheight() // 2.5)
         self.canvas.pack(side="left", fill="both", expand=True)
 
@@ -189,13 +192,16 @@ class AllOrdersPage(BasePage):
                 return
 
             # Создаем виджет Text для отображения информации
-            orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
-                               height=15)
+            orders_text = Text(self.inner_frame, font=FONT, wrap="none", bg=self["bg"], bd=0, highlightthickness=0,
+                               height=25, width=600)
+
+            header = "0. Паспорт - VIN - Начало бронирования - Конец бронирования - Итоговая стоимость - Статус\n\n"
+            orders_text.insert("end", header)
 
             # Добавляем информацию о заказах в Text
             for i, order in enumerate(all_orders, start=1):
                 order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
-                              f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
+                              f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n\n")
                 orders_text.insert("end", order_info)
 
             orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
@@ -206,7 +212,7 @@ class AllOrdersPage(BasePage):
 
             # Размещение виджетов
             scrollbar.pack(side="right", fill="y")
-            orders_text.pack(fill="both", padx=10, pady=5)
+            orders_text.pack(fill="both", padx=15, pady=5)
         except Exception as e:
             logging.error("Failed to load orders from the database.", exc_info=e)
             print("Failed to load orders from the database.")

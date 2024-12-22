@@ -92,7 +92,7 @@ class ClientsListPage(BasePage):
         try:
             clients = self.db.get_all_customers()
             if not clients:
-                no_data_label = Text(self.inner_frame, font=FONT, height=2, wrap="word")
+                no_data_label = Text(self.inner_frame, font=FONT, height=2, wrap="none")
                 no_data_label.insert("1.0", "Нет данных о клиентах.")
                 no_data_label.config(state="disabled")  # Запрет редактирования
                 no_data_label.pack(fill="x", padx=10, pady=5)
@@ -107,7 +107,7 @@ class ClientsListPage(BasePage):
                                    highlightthickness=0)
                 client_text.insert("1.0", client_info)
                 client_text.config(state="disabled")  # Запрет редактирования
-                client_text.pack(fill="x", padx=10, pady=5)
+                client_text.pack(fill="x", padx=15, pady=5)
 
         except Exception as e:
             logging.error("Failed to load clients from the database.", exc_info=e)

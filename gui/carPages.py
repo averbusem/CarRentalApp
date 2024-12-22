@@ -142,7 +142,7 @@ class AllCarsPage(BasePage):
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Canvas для прокрутки
-        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 1.6,
                              height=self.master.winfo_screenheight() // 2.5)
         self.canvas.pack(side="left", fill="both", expand=True)
 
@@ -179,19 +179,24 @@ class AllCarsPage(BasePage):
                 return
 
             # Создаем текстовый виджет для отображения списка автомобилей
-            car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
-                            height=15)
+            car_text = Text(self.inner_frame, font=FONT, wrap="none", bg=self["bg"], bd=0, highlightthickness=0,
+                            height=20, width=600)
+
+            header = ("0. VIN - Марка - Модель - Стоимость аренды - Регистрационный номер - "
+                      "Цвет - Статус - Объем двигателя - Лошадиные силы - Трансмиссия\n\n")
+            car_text.insert("end", header)
+
 
             # Добавляем информацию об автомобилях в виджет
             for i, car in enumerate(cars, start=1):
                 car_info = (
                     f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
                     f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
-                    f"{car['horsepower']} - {car['transmission']}\n")
+                    f"{car['horsepower']} - {car['transmission']}\n\n")
                 car_text.insert("end", car_info)
 
             car_text.config(state="disabled")  # Делаем виджет только для чтения
-            car_text.pack(fill="x", padx=10, pady=5)
+            car_text.pack(fill="x", padx=25, pady=10)
         except Exception as e:
             logging.error("Failed to load cars from the database.", exc_info=e)
             print("Failed to load cars from the database.")
@@ -222,7 +227,7 @@ class FreeCarsPage(BasePage):
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Canvas для прокрутки
-        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 1.6,
                              height=self.master.winfo_screenheight() // 2.5)
         self.canvas.pack(side="left", fill="both", expand=True)
 
@@ -260,15 +265,19 @@ class FreeCarsPage(BasePage):
                 return
 
             # Создаем виджет Text для отображения информации
-            car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
-                            height=15)
+            car_text = Text(self.inner_frame, font=FONT, wrap="none", bg=self["bg"], bd=0, highlightthickness=0,
+                            height=25, width=600)
+
+            header = ("0. VIN - Марка - Модель - Стоимость аренды - Регистрационный номер - "
+                      "Цвет - Статус - Объем двигателя - Лошадиные силы - Трансмиссия\n\n")
+            car_text.insert("end", header)
 
             # Добавляем информацию о свободных автомобилях в виджет
             for i, car in enumerate(free_cars, start=1):
                 car_info = (
                     f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
                     f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
-                    f"{car['horsepower']} - {car['transmission']}\n")
+                    f"{car['horsepower']} - {car['transmission']}\n\n")
                 car_text.insert("end", car_info)
 
             car_text.config(state="disabled")  # Делаем виджет только для чтения
@@ -279,7 +288,7 @@ class FreeCarsPage(BasePage):
 
             # Размещение виджетов
             scrollbar.pack(side="right", fill="y")
-            car_text.pack(fill="both", padx=10, pady=5)
+            car_text.pack(fill="both", padx=15, pady=5)
         except Exception as e:
             logging.error("Failed to load cars from the database.", exc_info=e)
             print("Failed to load cars from the database.")
@@ -346,7 +355,7 @@ class CarsBySearching(BasePage):
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Canvas для прокрутки
-        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 1.6,
                              height=self.master.winfo_screenheight() // 2.5)
         self.canvas.pack(side="left", fill="both", expand=True)
 
@@ -384,15 +393,19 @@ class CarsBySearching(BasePage):
                 return
 
             # Создаем виджет Text для отображения информации
-            car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
-                            height=15)
+            car_text = Text(self.inner_frame, font=FONT, wrap="none", bg=self["bg"], bd=0, highlightthickness=0,
+                            height=25, width=600)
+
+            header = ("0. VIN - Марка - Модель - Стоимость аренды - Регистрационный номер - "
+                      "Цвет - Статус - Объем двигателя - Лошадиные силы - Трансмиссия\n\n")
+            car_text.insert("end", header)
 
             # Добавляем информацию о найденных автомобилях в виджет
             for i, car in enumerate(cars, start=1):
                 car_info = (
                     f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
                     f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
-                    f"{car['horsepower']} - {car['transmission']}\n")
+                    f"{car['horsepower']} - {car['transmission']}\n\n")
                 car_text.insert("end", car_info)
 
             car_text.config(state="disabled")  # Делаем виджет только для чтения
@@ -403,7 +416,7 @@ class CarsBySearching(BasePage):
 
             # Размещение виджетов
             scrollbar.pack(side="right", fill="y")
-            car_text.pack(fill="both", padx=10, pady=5)
+            car_text.pack(fill="both", padx=15, pady=5)
         except Exception as e:
             logging.error("Failed to load cars from the database.", exc_info=e)
             print("Failed to load cars from the database.")
@@ -652,7 +665,7 @@ class AllModelsPage(BasePage):
         self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Canvas для прокрутки
-        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 1.6,
                              height=self.master.winfo_screenheight() // 2.5)
         self.canvas.pack(side="left", fill="both", expand=True)
 
@@ -689,13 +702,16 @@ class AllModelsPage(BasePage):
                 return
 
             # Создаем виджет Text для отображения информации
-            models_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
-                               height=15)
+            models_text = Text(self.inner_frame, font=FONT, wrap="none", bg=self["bg"], bd=0, highlightthickness=0,
+                               height=25, width=600)
+
+            header = "0. Марка - Модель - Объем двигателя - Лошадиные силы - Трансмиссия - Стоимость аренды\n\n"
+            models_text.insert("end", header)
 
             # Добавляем информацию о моделях в Text
             for i, model in enumerate(models, start=1):
                 model_info = (f"{i}. {model['brand_name']} - {model['model_name']} - {model['engine_volume']} - "
-                              f"{model['horsepower']} - {model['transmission']} - {model['rental_cost']}\n")
+                              f"{model['horsepower']} - {model['transmission']} - {model['rental_cost']}\n\n")
                 models_text.insert("end", model_info)
 
             models_text.config(state="disabled")  # Делаем Text только для чтения
@@ -706,7 +722,7 @@ class AllModelsPage(BasePage):
 
             # Размещение виджетов
             scrollbar.pack(side="right", fill="y")
-            models_text.pack(fill="both", padx=10, pady=5)
+            models_text.pack(fill="both", padx=15, pady=5)
         except Exception as e:
             logging.error("Failed to load models from the database.", exc_info=e)
             print("Failed to load models from the database.")
