@@ -104,12 +104,29 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- 4. Удалить клиента по паспорту или почте
-CREATE OR REPLACE FUNCTION delete_customer_by_passport_or_email(search_value TEXT)
+CREATE OR REPLACE FUNCTION delete_customer_by_passport_or_email(p_search_value TEXT)
 RETURNS VOID AS $$
 BEGIN
-    DELETE FROM Customers WHERE passport_number = search_value OR email = search_value;
+    -- Проверяем, есть ли активные бронирования по номеру паспорта или email
+    IF EXISTS (SELECT * FROM Bookings b
+        JOIN Customers c ON b.passport_number = c.passport_number
+        WHERE (c.passport_number = p_search_value OR c.email = p_search_value)
+        AND b.booking_status = 'active'
+    ) THEN
+        RAISE EXCEPTION 'User has active bookings and cannot be deleted.';
+    END IF;
+
+    -- Удаляем все бронирования пользователя по паспорту или email
+    DELETE FROM Bookings b USING Customers c
+    WHERE b.passport_number = c.passport_number
+      AND (c.passport_number = p_search_value OR c.email = p_search_value);
+    -- Удаляем пользователя по паспорту или email
+    DELETE FROM Customers
+    WHERE passport_number = p_search_value OR email = p_search_value;
+
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- Таблица автопарк ===========================================================
 -- 1. Просмотр всех машин
@@ -238,10 +255,25 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION delete_car(p_vin_car CHAR(17))
 RETURNS VOID AS $$
 BEGIN
+    -- Проверка статуса машины
+    IF NOT EXISTS (
+        SELECT 1
+        FROM Cars
+        WHERE vin_car = p_vin_car AND car_status = 'available'
+    ) THEN
+        RAISE EXCEPTION 'Cannot delete car %: it is not available', p_vin_car;
+    END IF;
+
+    -- Удаление всех записей из Bookings, связанных с этой машиной
+    DELETE FROM Bookings
+    WHERE vin_car = p_vin_car;
+
+    -- Удаление машины
     DELETE FROM Cars
     WHERE vin_car = p_vin_car;
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 -- Таблица заказы ===========================================================
