@@ -302,4 +302,4 @@ class DeleteClientPage(BasePage):
             logging.error(f"Failed to delete customer with search_value: {client_info} {e}")
             print(f"Failed to delete customer with search_value: {client_info}")
             tkinter.messagebox.showerror(title="Ошибка!",
-                                         message="Не удалось добавить клиента. Проверьте корректность данных.")
+                                         message="Не удалось удалить клиента. Проверьте корректность данных.")

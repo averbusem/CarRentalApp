@@ -333,7 +333,7 @@ class FindCarPage(BasePage):
 
     def findCars(self, *args, **kwargs):
         car_info = [self.brand_field.get().strip(), self.model_field.get().strip()]
-        if car_info[0].isalpha() and car_info[1].isalpha():
+        if car_info[0] and car_info[1]:
             self.clear_p()
             found_cars_page = CarsBySearching(self.master, db=self.db, brand=car_info[0], model=car_info[1])
             found_cars_page.pack(expand=True, anchor="center")
