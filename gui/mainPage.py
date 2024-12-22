@@ -1,23 +1,25 @@
+import logging
+import tkinter.messagebox
 from tkinter import *
+
 from gui.basePage import BasePage
 from gui.carPages import PreCarsPage
 from gui.clearingPages import PreClearingPage
 from gui.clientPages import PreClientsPage
 from gui.config import FONT, TITLE_FONT
 from gui.orderPages import PreOrdersPage
-import tkinter.messagebox
-import logging
+
 
 class MainPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         # Передаем объект базы данных (db) и передаем его в родительский класс
         super().__init__(master, db, *args, **kwargs)
 
-        self.clearing_btn = Button(self, text="Чистка базы данных", font=FONT, command=self.goToClearing, width=20)
-        self.orders_btn = Button(self, text="Заказы", font=FONT, command=self.goToOrders, width=20)
-        self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars, width=20)
-        self.clients_btn = Button(self, text="Клиенты", font=FONT, command=self.goToClients, width=20)
-        self.test_data_btn = Button(self, text="Ввести тестовые данные", font=FONT, command=self.insertTestData, width=20)
+        self.clearing_btn = Button(self, text="Чистка базы данных", font=FONT, command=self.goToClearing, width=23)
+        self.orders_btn = Button(self, text="Заказы", font=FONT, command=self.goToOrders, width=23)
+        self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars, width=23)
+        self.clients_btn = Button(self, text="Клиенты", font=FONT, command=self.goToClients, width=23)
+        self.test_data_btn = Button(self, text="Внести тестовые данные", font=FONT, command=self.insertTestData, width=23)
         self.earnings_txt = Label(text=f"Выручка:\n\n\n${0}", font=TITLE_FONT)
 
         self.earnings_txt.pack(side=LEFT, padx=260)
