@@ -1,12 +1,12 @@
 from tkinter import *
-
 from gui.basePage import BasePage
 from gui.carPages import PreCarsPage
 from gui.clearingPages import PreClearingPage
 from gui.clientPages import PreClientsPage
 from gui.config import FONT, TITLE_FONT
 from gui.orderPages import PreOrdersPage
-
+import tkinter.messagebox
+import logging
 
 class MainPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
@@ -17,12 +17,12 @@ class MainPage(BasePage):
         self.orders_btn = Button(self, text="Заказы", font=FONT, command=self.goToOrders, width=20)
         self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars, width=20)
         self.clients_btn = Button(self, text="Клиенты", font=FONT, command=self.goToClients, width=20)
-
+        self.test_data_btn = Button(self, text="Ввести тестовые данные", font=FONT, command=self.insertTestData, width=20)
         self.earnings_txt = Label(text=f"Выручка:\n\n\n${0}", font=TITLE_FONT)
 
         self.earnings_txt.pack(side=LEFT, padx=260)
 
-        elements = [self.clearing_btn, self.orders_btn, self.cars_btn, self.clients_btn]
+        elements = [self.clearing_btn, self.orders_btn, self.cars_btn, self.clients_btn, self.test_data_btn]
 
         self.page_elements += elements
         self.page_elements.append(self.earnings_txt)
@@ -50,6 +50,16 @@ class MainPage(BasePage):
         pcp = PreClientsPage(self.master, self.db)  # Передаем db
         pcp.pack(expand=True, anchor='center')
 
+    def insertTestData(self):
+        if tkinter.messagebox.askyesno(title="Добавление тестовых данных",
+                                       message="Вы собираетесь внести тестовые данные\n\n"
+                                               "Вы уверены?"):
+            try:
+                self.db.insert_test_data()  # Вызов функции очистки всех таблиц
+                tkinter.messagebox.showinfo(title="Успешно!", message="Тестовые данные добавлены!")
+            except Exception as e:
+                logging.error(f"Ошибка при добавлении тестовых данных: {e}")
+                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось добавить тестовые данные: {e}")
 
 class JustTestPage(BasePage):
     def __init__(self, master, *args, **kwargs):

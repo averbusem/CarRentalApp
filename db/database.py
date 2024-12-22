@@ -232,6 +232,16 @@ class Database:
         except Exception as e:
             self.error_handler.log_error(f"Failed to change cost of model: {brand_name} {model_name} {cost}", e)
 
+    def insert_test_data(self):
+        """Insert test data into the database by invoking the `insert_test_data` function."""
+        query = "SELECT insert_test_data();"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query)
+                print("Test data inserted successfully")
+        except Exception as e:
+            self.error_handler.log_error("Failed to insert test data", e)
+
     # Функции для очистки базы данных ===========================================================
     def clear_all_tables(self):
         """Clear all tables in the database by truncating them with CASCADE."""

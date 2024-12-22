@@ -3,7 +3,7 @@ from tkinter import *
 
 from gui.basePage import BasePage
 from gui.config import FONT, TITLE_FONT
-
+import logging
 
 class PreClearingPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
@@ -37,6 +37,7 @@ class PreClearingPage(BasePage):
                 self.db.clear_all_tables()  # Вызов функции очистки всех таблиц
                 tkinter.messagebox.showinfo(title="Успешно!", message="Все таблицы успешно очищены!")
             except Exception as e:
+                logging.error(f"Ошибка при очистке базы данных: {e}")
                 tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить все таблицы: {e}")
 
     def carsClearing(self, *args, **kwargs):
@@ -47,6 +48,7 @@ class PreClearingPage(BasePage):
                 self.db.clear_cars_table()  # Вызов функции очистки таблицы Cars
                 tkinter.messagebox.showinfo(title="Успешно!", message="Таблица автопарка успешно очищена!")
             except Exception as e:
+                logging.error(f"Ошибка при очистке автопарка: {e}")
                 tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу автопарка: {e}")
 
     def clientsClearing(self, *args, **kwargs):
@@ -57,6 +59,7 @@ class PreClearingPage(BasePage):
                 self.db.clear_customers_table()  # Вызов функции очистки таблицы Customers
                 tkinter.messagebox.showinfo(title="Успешно!", message="Таблица клиентов успешно очищена!")
             except Exception as e:
+                logging.error(f"Ошибка при очистке клиентов: {e}")
                 tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу клиентов: {e}")
 
     def ordersClearing(self, *args, **kwargs):
@@ -67,4 +70,5 @@ class PreClearingPage(BasePage):
                 self.db.clear_bookings_table()  # Вызов функции очистки таблицы Bookings
                 tkinter.messagebox.showinfo(title="Успешно!", message="Таблица заказов успешно очищена!")
             except Exception as e:
+                logging.error(f"Ошибка при очистке заказов: {e}")
                 tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу заказов: {e}")

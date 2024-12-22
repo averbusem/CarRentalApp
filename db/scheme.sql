@@ -65,7 +65,8 @@ RETURNS TABLE (
     phone_number CHAR(11)
 ) AS $$
 BEGIN
-    RETURN QUERY SELECT * FROM Customers;
+    RETURN QUERY SELECT * FROM Customers
+    ORDER BY last_name, first_name, middle_name;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -138,7 +139,8 @@ BEGIN
         m.horsepower,
         m.transmission
     FROM Cars c JOIN Models m
-    ON c.brand_name = m.brand_name AND c.model_name = m.model_name;
+    ON c.brand_name = m.brand_name AND c.model_name = m.model_name
+    ORDER BY c.brand_name, c.model_name;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -171,7 +173,8 @@ BEGIN
         m.transmission
     FROM Cars c JOIN Models m
     ON c.brand_name = m.brand_name AND c.model_name = m.model_name
-    WHERE c.car_status = 'available';
+    WHERE c.car_status = 'available'
+    ORDER BY c.brand_name, c.model_name;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -294,7 +297,8 @@ BEGIN
         b.end_date
     FROM Customers c JOIN Bookings b
     ON c.passport_number = b.passport_number
-    WHERE b.booking_status = 'active';
+    WHERE b.booking_status = 'active'
+    ORDER BY b.end_date;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -323,7 +327,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION calculate_booking_cost()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.cost = (SELECT rental_cost * (NEW.end_date - NEW.start_date) FROM Cars c
+    NEW.cost = (SELECT rental_cost * (NEW.end_date - NEW.start_date) + rental_cost FROM Cars c
                 JOIN Models m ON c.brand_name = m.brand_name AND c.model_name = m.model_name
                 WHERE c.vin_car = NEW.vin_car);
     RETURN NEW;
@@ -487,6 +491,41 @@ BEGIN
     -- Удаляем завершённые заказы
     DELETE FROM Bookings
     WHERE booking_status = 'completed';
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Функция для добавления тестовых данных ===========================================================
+CREATE OR REPLACE FUNCTION insert_test_data()
+RETURNS VOID AS $$
+BEGIN
+    -- Добавление данных в таблицу Customers
+    PERFORM add_customer('1234567890', 'Иван', 'Иванович', 'Иванов', 'ivan@example.com', '79991234567');
+    PERFORM add_customer('0987654321', 'Петр', 'Петрович', 'Петров', 'petr@example.com', '79992345678');
+    PERFORM add_customer('1122334455', 'Сидор', 'Сидорович', 'Сидоров', 'sidor@example.com', '79993456789');
+    PERFORM add_customer('6677889900', 'Алексей', 'Алексеевич', 'Алексеев', 'alex@example.com', '79994567890');
+    PERFORM add_customer('5544332211', 'Дмитрий', 'Дмитриевич', 'Дмитриев', 'dmitry@example.com', '79995678901');
+
+    -- Добавление данных в таблицу Models
+    PERFORM add_new_model('Toyota', 'Camry', 2.5, 203, 'Automatic', 5000.00);
+    PERFORM add_new_model('Honda', 'Civic', 1.5, 174, 'CVT', 4000.00);
+    PERFORM add_new_model('Ford', 'Mustang', 5.0, 450, 'Automatic', 8000.00);
+    PERFORM add_new_model('BMW', 'X5', 3.0, 335, 'Automatic', 7000.00);
+    PERFORM add_new_model('Audi', 'A4', 2.0, 190, 'Automatic', 6000.00);
+
+    -- Добавление данных в таблицу Cars
+    PERFORM add_car('1HGCM82633A123456', 'A123BC777', 'Toyota', 'Camry', 'White');
+    PERFORM add_car('2HGFG22551H567890', 'B456DE777', 'Toyota', 'Camry', 'Black');
+    PERFORM add_car('1FAFP40412F123456', 'C789FG777', 'Ford', 'Mustang', 'Red');
+    PERFORM add_car('5UXFG83557L123456', 'D012HI777', 'BMW', 'X5', 'Blue');
+    PERFORM add_car('WAUZZZ8K0BA123456', 'E345JK777', 'Audi', 'A4', 'Silver');
+
+    -- Добавление заказов
+    PERFORM create_booking('1234567890', '1HGCM82633A123456', '2023-10-10', '2023-10-10');
+    PERFORM create_booking('0987654321', '2HGFG22551H567890', '2023-10-02', '2023-10-11');
+    PERFORM create_booking('1122334455', '1FAFP40412F123456', '2023-10-03', '2023-10-12');
+    PERFORM create_booking('6677889900', '5UXFG83557L123456', '2023-10-04', '2023-10-13');
+    PERFORM create_booking('5544332211', 'WAUZZZ8K0BA123456', '2023-10-05', '2023-10-14');
 END;
 $$ LANGUAGE plpgsql;
 
