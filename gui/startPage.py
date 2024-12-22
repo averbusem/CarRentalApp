@@ -4,28 +4,35 @@ from tkinter import *
 from db.database import Database
 from gui.mainPage import MainPage
 
-from .config import FONT, TITLE_FONT, ADMIN_PASS, ADMIN_LOGIN, OWNER_PASS, OWNER_LOGIN
+from .config import (ADMIN_LOGIN, ADMIN_PASS, FONT, OWNER_LOGIN, OWNER_PASS,
+                     TITLE_FONT)
 
 
 class StartPage(Frame):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, on_login_success, *args, **kwargs):
+        """
+        :param master: Родительский объект.
+        :param on_login_success: Callback-функция для передачи объекта базы данных в App.
+        """
         super().__init__(master, *args, **kwargs)
-        self.elements = []
+        self.on_login_success = on_login_success  # Callback для передачи объекта базы данных
+
         self.greet_msg = Label(self, text="CarRentalApp", font=TITLE_FONT)
         self.login_text = Label(self, text="Ваш логин", font=FONT)
         self.pass_text = Label(self, text="Ваш пароль", font=FONT)
         self.login = Entry(self, font=FONT)
         self.password = Entry(self, show='*', font=FONT)
-
         self.accept_button = Button(self, text="Войти", command=self.signIn, font=FONT)
 
-        self.elements += [self.login_text, self.login, self.pass_text, self.password, self.accept_button]
+        self.greet_msg.pack(pady=50)
+        self.login_text.pack(pady=10)
+        self.login.pack(pady=10)
+        self.pass_text.pack(pady=10)
+        self.password.pack(pady=10)
+        self.accept_button.pack(pady=10)
 
         self.login.bind("<Return>", self.signIn)
         self.password.bind("<Return>", self.signIn)
-
-        self.greet_msg.pack(pady=50)
-        [x.pack(pady=10) for x in self.elements]
 
     def signIn(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Уверены?", message="Уверены в корректности данных?"):
@@ -36,16 +43,18 @@ class StartPage(Frame):
                 tkinter.messagebox.showerror(title="Ошибка", message="Неверные данные для входа!")
                 return
 
-
             try:
-                # Попробуем подключиться с указанными данными
+                # Подключение к базе данных
                 db = Database(user=username, password=password)
                 tkinter.messagebox.showinfo(title="Успех", message="Вы успешно вошли в систему!")
 
-                # Переход на следующую страницу, передаем объект базы данных
-                self.forget()
+                # Передача объекта базы данных в App через callback
+                self.on_login_success(db)
+
+                # Переход на следующую страницу
+                self.pack_forget()  # Убираем текущий экран
                 main_page = MainPage(self.master, db)
                 main_page.pack(expand=True)
 
             except Exception as e:
-                tkinter.messagebox.showerror(title="Ошибка", message="Неверные данные для входа!")
+                tkinter.messagebox.showerror(title="Ошибка", message=f"Ошибка подключения: {e}")
