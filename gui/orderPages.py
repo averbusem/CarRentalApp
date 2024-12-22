@@ -14,7 +14,6 @@ class PreOrdersPage(BasePage):
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
-
         self.create_order_btn = Button(self, text="Создать заказ", font=FONT, command=self.goToNewOrder, width=27)
         self.close_order_btn = Button(self, text="Закрыть заказ", font=FONT, command=self.goToClosingOrder, width=27)
         self.valid_orders_btn = Button(self, text="Просмотр действующих заказов", font=FONT, command=self.showOrdersNow, width=27)
@@ -96,19 +95,31 @@ class ValidOrdersPage(BasePage):
         back_btn.pack(pady=20)
 
     def load_active_orders(self):
-        # Получаем список всех заказов
+        # Получаем список всех активных заказов
         active_orders = self.db.get_active_bookings()
         if not active_orders:
             no_data_label = Label(self.inner_frame, text="Нет активных заказов.", font=FONT)
             no_data_label.pack(pady=10)
             return
 
-        # Отображение информации о свободных автомобилях
+        # Создаем виджет Text для отображения информации
+        orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+
+        # Добавляем информацию о заказах в Text
         for i, order in enumerate(active_orders, start=1):
-            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - {order['end_date']} - "
-                        f"{order['cost']} - {order['booking_status']}")
-            order_label = Label(self.inner_frame, text=order_info, font=FONT, anchor="w", justify="left")
-            order_label.pack(fill="x", padx=10, pady=5)
+            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
+                          f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
+            orders_text.insert("end", order_info)
+
+        orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
+
+        # Добавляем прокрутку
+        scrollbar = Scrollbar(self.inner_frame, command=orders_text.yview)
+        orders_text.config(yscrollcommand=scrollbar.set)
+
+        # Размещение виджетов
+        scrollbar.pack(side="right", fill="y")
+        orders_text.pack(fill="both", padx=10, pady=5)
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -167,12 +178,24 @@ class AllOrdersPage(BasePage):
             no_data_label.pack(pady=10)
             return
 
-        # Отображение информации о свободных автомобилях
+        # Создаем виджет Text для отображения информации
+        orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+
+        # Добавляем информацию о заказах в Text
         for i, order in enumerate(all_orders, start=1):
-            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - {order['end_date']} - "
-                        f"{order['cost']} - {order['booking_status']}")
-            order_label = Label(self.inner_frame, text=order_info, font=FONT, anchor="w", justify="left")
-            order_label.pack(fill="x", padx=10, pady=5)
+            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
+                          f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
+            orders_text.insert("end", order_info)
+
+        orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
+
+        # Добавляем прокрутку
+        scrollbar = Scrollbar(self.inner_frame, command=orders_text.yview)
+        orders_text.config(yscrollcommand=scrollbar.set)
+
+        # Размещение виджетов
+        scrollbar.pack(side="right", fill="y")
+        orders_text.pack(fill="both", padx=10, pady=5)
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""

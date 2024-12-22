@@ -177,13 +177,18 @@ class AllCarsPage(BasePage):
             no_data_label.pack(pady=10)
             return
 
-        # Отображение автомобилей в виде списка
+        # Создаем текстовый виджет для отображения списка автомобилей
+        car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+
+        # Добавляем информацию об автомобилях в виджет
         for i, car in enumerate(cars, start=1):
             car_info = (f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
-                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} -"
-                        f" {car['horsepower']} - {car['transmission']}")
-            car_label = Label(self.inner_frame, text=car_info, font=FONT, anchor="w", justify="left")
-            car_label.pack(fill="x", padx=10, pady=5)
+                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
+                        f"{car['horsepower']} - {car['transmission']}\n")
+            car_text.insert("end", car_info)
+
+        car_text.config(state="disabled")  # Делаем виджет только для чтения
+        car_text.pack(fill="x", padx=10, pady=5)
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -242,13 +247,25 @@ class FreeCarsPage(BasePage):
             no_data_label.pack(pady=10)
             return
 
-        # Отображение информации о свободных автомобилях
+        # Создаем виджет Text для отображения информации
+        car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+
+        # Добавляем информацию о свободных автомобилях в виджет
         for i, car in enumerate(free_cars, start=1):
             car_info = (f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
-                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} -"
-                        f" {car['horsepower']} - {car['transmission']}")
-            car_label = Label(self.inner_frame, text=car_info, font=FONT, anchor="w", justify="left")
-            car_label.pack(fill="x", padx=10, pady=5)
+                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
+                        f"{car['horsepower']} - {car['transmission']}\n")
+            car_text.insert("end", car_info)
+
+        car_text.config(state="disabled")  # Делаем виджет только для чтения
+
+        # Добавляем прокрутку, если список автомобилей длинный
+        scrollbar = Scrollbar(self.inner_frame, command=car_text.yview)
+        car_text.config(yscrollcommand=scrollbar.set)
+
+        # Размещение виджетов
+        scrollbar.pack(side="right", fill="y")
+        car_text.pack(fill="both", padx=10, pady=5)
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -343,13 +360,25 @@ class CarsBySearching(BasePage):
             no_data_label.pack(pady=10)
             return
 
-        # Отображение информации о найденных автомобилях
+        # Создаем виджет Text для отображения информации
+        car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+
+        # Добавляем информацию о найденных автомобилях в виджет
         for i, car in enumerate(cars, start=1):
             car_info = (f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
-                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} -"
-                        f" {car['horsepower']} - {car['transmission']}")
-            car_label = Label(self.inner_frame, text=car_info, font=FONT, anchor="w", justify="left")
-            car_label.pack(fill="x", padx=10, pady=5)
+                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
+                        f"{car['horsepower']} - {car['transmission']}\n")
+            car_text.insert("end", car_info)
+
+        car_text.config(state="disabled")  # Делаем виджет только для чтения
+
+        # Добавляем прокрутку, если список автомобилей длинный
+        scrollbar = Scrollbar(self.inner_frame, command=car_text.yview)
+        car_text.config(yscrollcommand=scrollbar.set)
+
+        # Размещение виджетов
+        scrollbar.pack(side="right", fill="y")
+        car_text.pack(fill="both", padx=10, pady=5)
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -536,16 +565,6 @@ class ChangePricePage(BasePage):
         self.model_field = Entry(self, font=FONT)
         self.price_field = Entry(self, font=FONT)
 
-        # enter_brand.pack(pady=15)
-        # self.brand_field.pack(pady=15)
-        #
-        # enter_model.pack(pady=15)
-        # self.model_field.pack(pady=15)
-        #
-        # enter_price.pack(pady=15)
-        # self.price_field.pack(pady=15)
-        #
-
         elements = [enter_brand, self.brand_field, enter_model, self.model_field, enter_price, self.price_field]
 
         self.page_elements += elements
@@ -627,12 +646,24 @@ class AllModelsPage(BasePage):
             no_data_label.pack(pady=10)
             return
 
-        # Отображение автомобилей в виде списка
+        # Создаем виджет Text для отображения информации
+        models_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+
+        # Добавляем информацию о моделях в Text
         for i, model in enumerate(models, start=1):
-            model_info = (f"{i}. {model['brand_name']} - {model['model_name']} - {model['engine_volume']} - {model['horsepower']} - "
-                        f"{model['transmission']} - {model['rental_cost']}")
-            model_label = Label(self.inner_frame, text=model_info, font=FONT, anchor="w", justify="left")
-            model_label.pack(fill="x", padx=10, pady=5)
+            model_info = (f"{i}. {model['brand_name']} - {model['model_name']} - {model['engine_volume']} - "
+                          f"{model['horsepower']} - {model['transmission']} - {model['rental_cost']}\n")
+            models_text.insert("end", model_info)
+
+        models_text.config(state="disabled")  # Делаем Text только для чтения
+
+        # Добавляем прокрутку
+        scrollbar = Scrollbar(self.inner_frame, command=models_text.yview)
+        models_text.config(yscrollcommand=scrollbar.set)
+
+        # Размещение виджетов
+        scrollbar.pack(side="right", fill="y")
+        models_text.pack(fill="both", padx=10, pady=5)
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""

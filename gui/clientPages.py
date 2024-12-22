@@ -1,7 +1,7 @@
 import logging
 import re
 import tkinter.messagebox
-from tkinter import Button, Canvas, Entry, Frame, Label, Scrollbar
+from tkinter import Button, Canvas, Entry, Frame, Label, Scrollbar, Text
 
 from gui.basePage import BasePage
 from gui.config import FONT, TITLE_FONT
@@ -91,8 +91,10 @@ class ClientsListPage(BasePage):
     def load_clients(self):
         clients = self.db.get_all_customers()
         if not clients:
-            no_data_label = Label(self.inner_frame, text="Нет данных о клиентах.", font=FONT)
-            no_data_label.pack(pady=10)
+            no_data_label = Text(self.inner_frame, font=FONT, height=2, wrap="word")
+            no_data_label.insert("1.0", "Нет данных о клиентах.")
+            no_data_label.config(state="disabled")  # Запрет редактирования
+            no_data_label.pack(fill="x", padx=10, pady=5)
             return
 
         # Отображение клиентов в виде списка
@@ -100,8 +102,10 @@ class ClientsListPage(BasePage):
             client_info = (f"{i}. {client['passport_number']} - "
                            f"{client['middle_name']} {client['first_name']} {client['last_name']} - "
                            f"{client['email']} - {client['phone_number']}")
-            client_label = Label(self.inner_frame, text=client_info, font=FONT, anchor="w", justify="left")
-            client_label.pack(fill="x", padx=10, pady=5)
+            client_text = Text(self.inner_frame, font=FONT, height=2, wrap="word", bg=self["bg"], bd=0, highlightthickness=0)
+            client_text.insert("1.0", client_info)
+            client_text.config(state="disabled")  # Запрет редактирования
+            client_text.pack(fill="x", padx=10, pady=5)
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
