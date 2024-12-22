@@ -89,23 +89,33 @@ class ClientsListPage(BasePage):
         self.back_button.pack(pady=20)
 
     def load_clients(self):
-        clients = self.db.get_all_customers()
-        if not clients:
-            no_data_label = Text(self.inner_frame, font=FONT, height=2, wrap="word")
-            no_data_label.insert("1.0", "Нет данных о клиентах.")
-            no_data_label.config(state="disabled")  # Запрет редактирования
-            no_data_label.pack(fill="x", padx=10, pady=5)
-            return
+        try:
+            clients = self.db.get_all_customers()
+            if not clients:
+                no_data_label = Text(self.inner_frame, font=FONT, height=2, wrap="word")
+                no_data_label.insert("1.0", "Нет данных о клиентах.")
+                no_data_label.config(state="disabled")  # Запрет редактирования
+                no_data_label.pack(fill="x", padx=10, pady=5)
+                return
 
-        # Отображение клиентов в виде списка
-        for i, client in enumerate(clients, start=1):
-            client_info = (f"{i}. {client['passport_number']} - "
-                           f"{client['middle_name']} {client['first_name']} {client['last_name']} - "
-                           f"{client['email']} - {client['phone_number']}")
-            client_text = Text(self.inner_frame, font=FONT, height=2, wrap="word", bg=self["bg"], bd=0, highlightthickness=0)
-            client_text.insert("1.0", client_info)
-            client_text.config(state="disabled")  # Запрет редактирования
-            client_text.pack(fill="x", padx=10, pady=5)
+            # Отображение клиентов в виде списка
+            for i, client in enumerate(clients, start=1):
+                client_info = (f"{i}. {client['passport_number']} - "
+                               f"{client['middle_name']} {client['first_name']} {client['last_name']} - "
+                               f"{client['email']} - {client['phone_number']}")
+                client_text = Text(self.inner_frame, font=FONT, height=2, wrap="word", bg=self["bg"], bd=0,
+                                   highlightthickness=0)
+                client_text.insert("1.0", client_info)
+                client_text.config(state="disabled")  # Запрет редактирования
+                client_text.pack(fill="x", padx=10, pady=5)
+
+        except Exception as e:
+            logging.error("Failed to load clients from the database.", exc_info=e)
+            print("Failed to load clients from the database.")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при загрузке данных клиентов"
+            )
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -178,7 +188,8 @@ class FindClientPage(BasePage):
                 message=client_data
             )
         except Exception as e:
-            logging.error(f"Ошибка при поиске клиента: {e}")
+            logging.error(f"Failed to find customer with search_value: {client_info} {e}")
+            print(f"Failed to find customer with search_value: {client_info}")
             tkinter.messagebox.showerror(
                 title="Ошибка!",
                 message="Произошла ошибка при поиске клиента. Проверьте корректность данных и повторите попытку."
@@ -245,8 +256,10 @@ class AddClientPage(BasePage):
         try:
             self.db.add_customer(client_info[0], client_info[1], client_info[2], client_info[3], client_info[4], client_info[5])
             tkinter.messagebox.showinfo(title="Успешно!", message="Клиент успешно добавлен!")
+            print("Customer added successfully")
         except Exception as e:
-            logging.error(f"Ошибка при добавлении клиента: {e}")
+            logging.error(f"Ошибка при добавлении клиента: {client_info[1]} {e}")
+            print(f"Failed to add customer {client_info[1]}")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось добавить клиента. Проверьте корректность данных.")
 
 
@@ -284,7 +297,9 @@ class DeleteClientPage(BasePage):
         try:
             self.db.delete_customer_by_passport_or_email(client_info)
             tkinter.messagebox.showinfo(title="Успешно!", message="Клиент успешно удалён!")
+            print("Customer deleted successfully")
         except Exception as e:
-            logging.error(f"Ошибка при добавлении клиента: {e}")
+            logging.error(f"Failed to delete customer with search_value: {client_info} {e}")
+            print(f"Failed to delete customer with search_value: {client_info}")
             tkinter.messagebox.showerror(title="Ошибка!",
                                          message="Не удалось добавить клиента. Проверьте корректность данных.")

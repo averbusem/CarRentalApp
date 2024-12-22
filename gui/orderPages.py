@@ -95,31 +95,40 @@ class ValidOrdersPage(BasePage):
         back_btn.pack(pady=20)
 
     def load_active_orders(self):
-        # Получаем список всех активных заказов
-        active_orders = self.db.get_active_bookings()
-        if not active_orders:
-            no_data_label = Label(self.inner_frame, text="Нет активных заказов.", font=FONT)
-            no_data_label.pack(pady=10)
-            return
+        try:
+            # Получаем список всех активных заказов
+            active_orders = self.db.get_active_bookings()
+            if not active_orders:
+                no_data_label = Label(self.inner_frame, text="Нет активных заказов.", font=FONT)
+                no_data_label.pack(pady=10)
+                return
 
-        # Создаем виджет Text для отображения информации
-        orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+            # Создаем виджет Text для отображения информации
+            orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
+                               height=15)
 
-        # Добавляем информацию о заказах в Text
-        for i, order in enumerate(active_orders, start=1):
-            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
-                          f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
-            orders_text.insert("end", order_info)
+            # Добавляем информацию о заказах в Text
+            for i, order in enumerate(active_orders, start=1):
+                order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
+                              f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
+                orders_text.insert("end", order_info)
 
-        orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
+            orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
 
-        # Добавляем прокрутку
-        scrollbar = Scrollbar(self.inner_frame, command=orders_text.yview)
-        orders_text.config(yscrollcommand=scrollbar.set)
+            # Добавляем прокрутку
+            scrollbar = Scrollbar(self.inner_frame, command=orders_text.yview)
+            orders_text.config(yscrollcommand=scrollbar.set)
 
-        # Размещение виджетов
-        scrollbar.pack(side="right", fill="y")
-        orders_text.pack(fill="both", padx=10, pady=5)
+            # Размещение виджетов
+            scrollbar.pack(side="right", fill="y")
+            orders_text.pack(fill="both", padx=10, pady=5)
+        except Exception as e:
+            logging.error("Failed to load active orders from the database.", exc_info=e)
+            print("Failed to load active orders from the database.")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при загрузке данных активных заказов."
+            )
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -171,31 +180,41 @@ class AllOrdersPage(BasePage):
         back_btn.pack(pady=20)
 
     def load_all_orders(self):
-        # Получаем список всех заказов
-        all_orders = self.db.get_all_bookings()
-        if not all_orders:
-            no_data_label = Label(self.inner_frame, text="Заказов еще не было.", font=FONT)
-            no_data_label.pack(pady=10)
-            return
+        try:
+            # Получаем список всех заказов
+            all_orders = self.db.get_all_bookings()
+            if not all_orders:
+                no_data_label = Label(self.inner_frame, text="Заказов еще не было.", font=FONT)
+                no_data_label.pack(pady=10)
+                return
 
-        # Создаем виджет Text для отображения информации
-        orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+            # Создаем виджет Text для отображения информации
+            orders_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
+                               height=15)
 
-        # Добавляем информацию о заказах в Text
-        for i, order in enumerate(all_orders, start=1):
-            order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
-                          f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
-            orders_text.insert("end", order_info)
+            # Добавляем информацию о заказах в Text
+            for i, order in enumerate(all_orders, start=1):
+                order_info = (f"{i}. {order['passport_number']} - {order['vin_car']} - {order['start_date']} - "
+                              f"{order['end_date']} - {order['cost']} - {order['booking_status']}\n")
+                orders_text.insert("end", order_info)
 
-        orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
+            orders_text.config(state="disabled")  # Делаем текстовое поле только для чтения
 
-        # Добавляем прокрутку
-        scrollbar = Scrollbar(self.inner_frame, command=orders_text.yview)
-        orders_text.config(yscrollcommand=scrollbar.set)
+            # Добавляем прокрутку
+            scrollbar = Scrollbar(self.inner_frame, command=orders_text.yview)
+            orders_text.config(yscrollcommand=scrollbar.set)
 
-        # Размещение виджетов
-        scrollbar.pack(side="right", fill="y")
-        orders_text.pack(fill="both", padx=10, pady=5)
+            # Размещение виджетов
+            scrollbar.pack(side="right", fill="y")
+            orders_text.pack(fill="both", padx=10, pady=5)
+        except Exception as e:
+            logging.error("Failed to load orders from the database.", exc_info=e)
+            print("Failed to load orders from the database.")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при загрузке данных заказов."
+            )
+
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -255,8 +274,10 @@ class NewOrderPage(BasePage):
         try:
             self.db.create_booking(order_info[0], order_info[1], order_info[2], order_info[3])
             tkinter.messagebox.showinfo(title="Успешно!", message="Заказ успешно создан!")
+            print("Booking created successfully")
         except Exception as e:
             logging.error(f"Ошибка при создании заказа: {e}")
+            print("Failed to create booking")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось создать заказ. Проверьте корректность данных.")
 
 
@@ -300,6 +321,8 @@ class CloseOrderPage(BasePage):
         try:
             self.db.close_booking(order_info[0], order_info[1])
             tkinter.messagebox.showinfo(title="Успешно!", message="Заказ успешно закрыт!")
+            print("Booking closed successfully")
         except Exception as e:
             logging.error(f"Ошибка при закрытии заказа: {e}")
+            print("Failed to close booking")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось закрыть заказ. Проверьте корректность данных.")

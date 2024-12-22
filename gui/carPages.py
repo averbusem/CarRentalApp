@@ -171,24 +171,35 @@ class AllCarsPage(BasePage):
         back_btn.pack(pady=20)
 
     def load_cars(self):
-        cars = self.db.get_all_cars()
-        if not cars:
-            no_data_label = Label(self.inner_frame, text="Нет данных об автомобилях.", font=FONT)
-            no_data_label.pack(pady=10)
-            return
+        try:
+            cars = self.db.get_all_cars()
+            if not cars:
+                no_data_label = Label(self.inner_frame, text="Нет данных об автомобилях.", font=FONT)
+                no_data_label.pack(pady=10)
+                return
 
-        # Создаем текстовый виджет для отображения списка автомобилей
-        car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+            # Создаем текстовый виджет для отображения списка автомобилей
+            car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
+                            height=15)
 
-        # Добавляем информацию об автомобилях в виджет
-        for i, car in enumerate(cars, start=1):
-            car_info = (f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
-                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
-                        f"{car['horsepower']} - {car['transmission']}\n")
-            car_text.insert("end", car_info)
+            # Добавляем информацию об автомобилях в виджет
+            for i, car in enumerate(cars, start=1):
+                car_info = (
+                    f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
+                    f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
+                    f"{car['horsepower']} - {car['transmission']}\n")
+                car_text.insert("end", car_info)
 
-        car_text.config(state="disabled")  # Делаем виджет только для чтения
-        car_text.pack(fill="x", padx=10, pady=5)
+            car_text.config(state="disabled")  # Делаем виджет только для чтения
+            car_text.pack(fill="x", padx=10, pady=5)
+        except Exception as e:
+            logging.error("Failed to load cars from the database.", exc_info=e)
+            print("Failed to load cars from the database.")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при загрузке данных автомобилей."
+            )
+
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -240,32 +251,43 @@ class FreeCarsPage(BasePage):
         back_btn.pack(pady=20)
 
     def load_free_cars(self):
-        # Получаем список свободных автомобилей
-        free_cars = self.db.get_all_available_cars()
-        if not free_cars:
-            no_data_label = Label(self.inner_frame, text="Нет свободных автомобилей.", font=FONT)
-            no_data_label.pack(pady=10)
-            return
+        try:
+            # Получаем список свободных автомобилей
+            free_cars = self.db.get_all_available_cars()
+            if not free_cars:
+                no_data_label = Label(self.inner_frame, text="Нет свободных автомобилей.", font=FONT)
+                no_data_label.pack(pady=10)
+                return
 
-        # Создаем виджет Text для отображения информации
-        car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+            # Создаем виджет Text для отображения информации
+            car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
+                            height=15)
 
-        # Добавляем информацию о свободных автомобилях в виджет
-        for i, car in enumerate(free_cars, start=1):
-            car_info = (f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
-                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
-                        f"{car['horsepower']} - {car['transmission']}\n")
-            car_text.insert("end", car_info)
+            # Добавляем информацию о свободных автомобилях в виджет
+            for i, car in enumerate(free_cars, start=1):
+                car_info = (
+                    f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
+                    f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
+                    f"{car['horsepower']} - {car['transmission']}\n")
+                car_text.insert("end", car_info)
 
-        car_text.config(state="disabled")  # Делаем виджет только для чтения
+            car_text.config(state="disabled")  # Делаем виджет только для чтения
 
-        # Добавляем прокрутку, если список автомобилей длинный
-        scrollbar = Scrollbar(self.inner_frame, command=car_text.yview)
-        car_text.config(yscrollcommand=scrollbar.set)
+            # Добавляем прокрутку, если список автомобилей длинный
+            scrollbar = Scrollbar(self.inner_frame, command=car_text.yview)
+            car_text.config(yscrollcommand=scrollbar.set)
 
-        # Размещение виджетов
-        scrollbar.pack(side="right", fill="y")
-        car_text.pack(fill="both", padx=10, pady=5)
+            # Размещение виджетов
+            scrollbar.pack(side="right", fill="y")
+            car_text.pack(fill="both", padx=10, pady=5)
+        except Exception as e:
+            logging.error("Failed to load cars from the database.", exc_info=e)
+            print("Failed to load cars from the database.")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при загрузке данных автомобилей."
+            )
+
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -353,32 +375,43 @@ class CarsBySearching(BasePage):
         back_btn.pack(pady=20)
 
     def load_found_cars(self, brand: str, model: str):
-        # Получаем список автомобилей
-        cars = self.db.find_cars(brand, model)
-        if not cars:
-            no_data_label = Label(self.inner_frame, text="Нет автомобилей такой модели.", font=FONT)
-            no_data_label.pack(pady=10)
-            return
+        try:
+            # Получаем список автомобилей
+            cars = self.db.find_cars(brand, model)
+            if not cars:
+                no_data_label = Label(self.inner_frame, text="Нет автомобилей такой модели.", font=FONT)
+                no_data_label.pack(pady=10)
+                return
 
-        # Создаем виджет Text для отображения информации
-        car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+            # Создаем виджет Text для отображения информации
+            car_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
+                            height=15)
 
-        # Добавляем информацию о найденных автомобилях в виджет
-        for i, car in enumerate(cars, start=1):
-            car_info = (f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
-                        f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
-                        f"{car['horsepower']} - {car['transmission']}\n")
-            car_text.insert("end", car_info)
+            # Добавляем информацию о найденных автомобилях в виджет
+            for i, car in enumerate(cars, start=1):
+                car_info = (
+                    f"{i}. {car['vin_car']} - {car['brand_name']} - {car['model_name']} - {car['rental_cost']} - "
+                    f"{car['registration_number']} - {car['color']} - {car['car_status']} - {car['engine_volume']} - "
+                    f"{car['horsepower']} - {car['transmission']}\n")
+                car_text.insert("end", car_info)
 
-        car_text.config(state="disabled")  # Делаем виджет только для чтения
+            car_text.config(state="disabled")  # Делаем виджет только для чтения
 
-        # Добавляем прокрутку, если список автомобилей длинный
-        scrollbar = Scrollbar(self.inner_frame, command=car_text.yview)
-        car_text.config(yscrollcommand=scrollbar.set)
+            # Добавляем прокрутку, если список автомобилей длинный
+            scrollbar = Scrollbar(self.inner_frame, command=car_text.yview)
+            car_text.config(yscrollcommand=scrollbar.set)
 
-        # Размещение виджетов
-        scrollbar.pack(side="right", fill="y")
-        car_text.pack(fill="both", padx=10, pady=5)
+            # Размещение виджетов
+            scrollbar.pack(side="right", fill="y")
+            car_text.pack(fill="both", padx=10, pady=5)
+        except Exception as e:
+            logging.error("Failed to load cars from the database.", exc_info=e)
+            print("Failed to load cars from the database.")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при загрузке данных автомобилей."
+            )
+
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""
@@ -441,8 +474,10 @@ class AddCarPage(BasePage):
         try:
             self.db.add_car(car_info[0], car_info[1], car_info[2], car_info[3], car_info[4])
             tkinter.messagebox.showinfo(title="Успешно!", message="Машина успешно добавлена!")
+            print("Car added successfully")
         except Exception as e:
             logging.error(f"Ошибка при добавлении машины: {e}")
+            print("Failed to add car")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось добавить машину. Проверьте корректность данных.")
 
 
@@ -504,8 +539,10 @@ class AddModelPage(BasePage):
         try:
             self.db.add_model(model_info[0], model_info[1], model_info[2], model_info[3], model_info[4], model_info[5])
             tkinter.messagebox.showinfo(title="Успешно!", message="Модель успешно добавлена!")
+            print("Model added successfully")
         except Exception as e:
             logging.error(f"Ошибка при добавлении модели: {e}")
+            print("Failed to add model")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось добавить модель. Проверьте корректность данных.")
 
 
@@ -543,8 +580,10 @@ class DeleteCarPage(BasePage):
         try:
             self.db.delete_car(car_info)
             tkinter.messagebox.showinfo(title="Успешно!", message="Машина успешно удалена!")
+            print("Car deleted successfully")
         except Exception as e:
             logging.error(f"Ошибка при удалении машины: {e}")
+            print("Failed to delete car")
             tkinter.messagebox.showerror(title="Ошибка!",
                                          message="Не удалось удалить машину. Проверьте корректность данных.")
 
@@ -594,8 +633,10 @@ class ChangePricePage(BasePage):
             # Обновление цены в базе данных
             self.db.change_model_cost(brand_name=info[0], model_name=info[1], cost=info[2])
             tkinter.messagebox.showinfo(title="Успешно!", message="Стоимость аренды успешно обновлена!")
+            print("Model cost modified successfully")
         except Exception as e:
             logging.error(f"Ошибка при обновлении цены аренды: {e}")
+            print("Failed to change cost of model")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось обновить цену. Проверьте корректность данных.")
 
 class AllModelsPage(BasePage):
@@ -640,30 +681,39 @@ class AllModelsPage(BasePage):
         back_btn.pack(pady=20)
 
     def load_models(self):
-        models = self.db.get_all_models()
-        if not models:
-            no_data_label = Label(self.inner_frame, text="Нет данных о моделях.", font=FONT)
-            no_data_label.pack(pady=10)
-            return
+        try:
+            models = self.db.get_all_models()
+            if not models:
+                no_data_label = Label(self.inner_frame, text="Нет данных о моделях.", font=FONT)
+                no_data_label.pack(pady=10)
+                return
 
-        # Создаем виджет Text для отображения информации
-        models_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0, height=15)
+            # Создаем виджет Text для отображения информации
+            models_text = Text(self.inner_frame, font=FONT, wrap="word", bg=self["bg"], bd=0, highlightthickness=0,
+                               height=15)
 
-        # Добавляем информацию о моделях в Text
-        for i, model in enumerate(models, start=1):
-            model_info = (f"{i}. {model['brand_name']} - {model['model_name']} - {model['engine_volume']} - "
-                          f"{model['horsepower']} - {model['transmission']} - {model['rental_cost']}\n")
-            models_text.insert("end", model_info)
+            # Добавляем информацию о моделях в Text
+            for i, model in enumerate(models, start=1):
+                model_info = (f"{i}. {model['brand_name']} - {model['model_name']} - {model['engine_volume']} - "
+                              f"{model['horsepower']} - {model['transmission']} - {model['rental_cost']}\n")
+                models_text.insert("end", model_info)
 
-        models_text.config(state="disabled")  # Делаем Text только для чтения
+            models_text.config(state="disabled")  # Делаем Text только для чтения
 
-        # Добавляем прокрутку
-        scrollbar = Scrollbar(self.inner_frame, command=models_text.yview)
-        models_text.config(yscrollcommand=scrollbar.set)
+            # Добавляем прокрутку
+            scrollbar = Scrollbar(self.inner_frame, command=models_text.yview)
+            models_text.config(yscrollcommand=scrollbar.set)
 
-        # Размещение виджетов
-        scrollbar.pack(side="right", fill="y")
-        models_text.pack(fill="both", padx=10, pady=5)
+            # Размещение виджетов
+            scrollbar.pack(side="right", fill="y")
+            models_text.pack(fill="both", padx=10, pady=5)
+        except Exception as e:
+            logging.error("Failed to load models from the database.", exc_info=e)
+            print("Failed to load models from the database.")
+            tkinter.messagebox.showerror(
+                title="Ошибка!",
+                message="Произошла ошибка при загрузке данных о моделях."
+            )
 
     def _on_mouse_wheel(self, event):
         """Обрабатывает прокрутку колесиком мыши."""

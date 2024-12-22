@@ -59,8 +59,10 @@ class MainPage(BasePage):
             try:
                 self.db.insert_test_data()  # Вызов функции очистки всех таблиц
                 tkinter.messagebox.showinfo(title="Успешно!", message="Тестовые данные добавлены!")
+                print("Test data inserted successfully")
             except Exception as e:
                 logging.error(f"Ошибка при добавлении тестовых данных: {e}")
+                print("Failed to insert test data")
                 tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось добавить тестовые данные: {e}")
 
 class JustTestPage(BasePage):

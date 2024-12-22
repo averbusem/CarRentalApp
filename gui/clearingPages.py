@@ -38,9 +38,11 @@ class PreClearingPage(BasePage):
             try:
                 self.db.clear_all_tables()  # Вызов функции очистки всех таблиц
                 tkinter.messagebox.showinfo(title="Успешно!", message="Все таблицы успешно очищены!")
+                print("All tables have been cleared successfully")
             except Exception as e:
                 logging.error(f"Ошибка при очистке базы данных: {e}")
-                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить все таблицы: {e}")
+                print("Failed to clear all tables")
+                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить все таблицы:")
 
     def carsClearing(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Очистка автопарка",
@@ -49,9 +51,11 @@ class PreClearingPage(BasePage):
             try:
                 self.db.clear_cars_table()  # Вызов функции очистки таблицы Cars
                 tkinter.messagebox.showinfo(title="Успешно!", message="Таблица автопарка успешно очищена!")
+                print("Cars table cleared successfully")
             except Exception as e:
                 logging.error(f"Ошибка при очистке автопарка: {e}")
-                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу автопарка: {e}")
+                print("Failed to clear cars table")
+                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу автопарка")
 
     def clientsClearing(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Очистка клиентской базы",
@@ -60,9 +64,11 @@ class PreClearingPage(BasePage):
             try:
                 self.db.clear_customers_table()  # Вызов функции очистки таблицы Customers
                 tkinter.messagebox.showinfo(title="Успешно!", message="Таблица клиентов успешно очищена!")
+                print("Customers table cleared successfully")
             except Exception as e:
                 logging.error(f"Ошибка при очистке клиентов: {e}")
-                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу клиентов: {e}")
+                print("Failed to clear customers table")
+                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу клиентов")
 
     def ordersClearing(self, *args, **kwargs):
         if tkinter.messagebox.askyesno(title="Очистка заказов",
@@ -71,9 +77,11 @@ class PreClearingPage(BasePage):
             try:
                 self.db.clear_bookings_table()  # Вызов функции очистки таблицы Bookings
                 tkinter.messagebox.showinfo(title="Успешно!", message="Таблица заказов успешно очищена!")
+                print("Bookings table cleared successfully")
             except Exception as e:
                 logging.error(f"Ошибка при очистке заказов: {e}")
-                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу заказов: {e}")
+                print("Failed to clear bookings table")
+                tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось очистить таблицу заказов")
 
     def deleteClientInfo(self, *args, **kwargs):
         self.clear_p()
@@ -115,7 +123,9 @@ class ClearingClientInfo(BasePage):
 
         try:
             self.db.delete_customer_fully(client_passport)
+            print(f"Data for user deleted successfully.")
             tkinter.messagebox.showinfo(title="Успешно!", message="Вся информация о клиенте была удалена!")
         except Exception as e:
             logging.error(f"Ошибка при удалении информации: {e}")
+            print("Failed to delete data for user with passport number")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось удалить информацию. Проверьте корректность данных.")
