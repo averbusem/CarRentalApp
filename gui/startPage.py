@@ -4,7 +4,7 @@ from tkinter import *
 from db.database import Database
 from gui.mainPage import MainPage
 
-from .config import FONT, TITLE_FONT
+from .config import FONT, TITLE_FONT, ADMIN_PASS, ADMIN_LOGIN, OWNER_PASS, OWNER_LOGIN
 
 
 class StartPage(Frame):
@@ -31,6 +31,12 @@ class StartPage(Frame):
         if tkinter.messagebox.askyesno(title="Уверены?", message="Уверены в корректности данных?"):
             username = self.login.get()
             password = self.password.get()
+
+            if not ((username == ADMIN_LOGIN and password == ADMIN_PASS) or (username == OWNER_LOGIN and password == OWNER_PASS)):
+                tkinter.messagebox.showerror(title="Ошибка", message="Неверные данные для входа!")
+                return
+
+
             try:
                 # Попробуем подключиться с указанными данными
                 db = Database(user=username, password=password)

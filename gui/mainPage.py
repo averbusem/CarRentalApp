@@ -15,21 +15,20 @@ class MainPage(BasePage):
         # Передаем объект базы данных (db) и передаем его в родительский класс
         super().__init__(master, db, *args, **kwargs)
 
+        app_name = Label(self, text="CarRentalApp", font=TITLE_FONT)
+        app_name.pack(anchor='center', pady=60)
+
         self.clearing_btn = Button(self, text="Чистка базы данных", font=FONT, command=self.goToClearing, width=23)
         self.orders_btn = Button(self, text="Заказы", font=FONT, command=self.goToOrders, width=23)
         self.cars_btn = Button(self, text="Автопарк", font=FONT, command=self.goToCars, width=23)
         self.clients_btn = Button(self, text="Клиенты", font=FONT, command=self.goToClients, width=23)
         self.test_data_btn = Button(self, text="Внести тестовые данные", font=FONT, command=self.insertTestData, width=23)
-        self.earnings_txt = Label(text=f"Выручка:\n\n\n${0}", font=TITLE_FONT)
-
-        self.earnings_txt.pack(side=LEFT, padx=260)
 
         elements = [self.clearing_btn, self.orders_btn, self.cars_btn, self.clients_btn, self.test_data_btn]
 
         self.page_elements += elements
-        self.page_elements.append(self.earnings_txt)
 
-        [x.pack(anchor='e', pady=20) for x in elements]
+        [x.pack(anchor='center', pady=20) for x in elements]
 
 
     def goToClearing(self, *args, **kwargs):
@@ -64,10 +63,3 @@ class MainPage(BasePage):
                 logging.error(f"Ошибка при добавлении тестовых данных: {e}")
                 print("Failed to insert test data")
                 tkinter.messagebox.showerror(title="Ошибка!", message=f"Не удалось добавить тестовые данные: {e}")
-
-class JustTestPage(BasePage):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        greet_msg = Label(self, text="CarRentalApp", font=TITLE_FONT)
-
-        greet_msg.pack(pady=50)
