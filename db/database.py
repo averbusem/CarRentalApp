@@ -282,3 +282,18 @@ class Database:
                 print("Bookings table cleared successfully")
         except Exception as e:
             self.error_handler.log_error("Failed to clear bookings table", e)
+
+    def delete_customer_fully(self, passport_number: str):
+        """
+        Deletes all data associated with a user in the Customers and Bookings tables.
+        Raises an exception if the user has active bookings.
+
+        :param passport_number: The passport number of the user to delete.
+        """
+        query = "SELECT delete_customer_fully(%s);"
+        try:
+            with self.connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute(query, (passport_number,))
+                print(f"Data for user with passport number {passport_number} deleted successfully.")
+        except Exception as e:
+            self.error_handler.log_error(f"Failed to delete data for user with passport number {passport_number}", e)

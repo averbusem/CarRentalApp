@@ -494,6 +494,28 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+--5. Полностью удалить все данные клиента в таблицах Customers и Bookings
+CREATE OR REPLACE FUNCTION delete_customer_fully(p_passport_number CHAR(10))
+RETURNS VOID AS $$
+BEGIN
+    -- Проверяем, есть ли активные бронирования
+    IF EXISTS ( SELECT * FROM Bookings
+        WHERE passport_number = p_passport_number AND booking_status = 'active'
+    ) THEN
+        RAISE EXCEPTION 'User has active bookings and cannot be deleted.';
+    END IF;
+
+    -- Удаляем все бронирования пользователя
+    DELETE FROM Bookings
+    WHERE passport_number = p_passport_number;
+
+    -- Удаляем самого пользователя
+    DELETE FROM Customers
+    WHERE passport_number = p_passport_number;
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 -- Функция для добавления тестовых данных ===========================================================
 CREATE OR REPLACE FUNCTION insert_test_data()
