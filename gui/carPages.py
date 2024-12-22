@@ -1,4 +1,5 @@
 import logging
+import re
 import tkinter
 from tkinter import *
 from tkinter import messagebox
@@ -14,19 +15,51 @@ class PreCarsPage(BasePage):
         from gui.mainPage import MainPage
         self.set_previous_page(MainPage)
 
-        self.all_cars_btn = Button(self, text="Просмотр всех машин", font=FONT, command=self.listOfCars, width=27)
-        self.free_cars_btn = Button(self, text="Просмотр свободных машин", font=FONT, command=self.checkFreeCars, width=27)
-        self.find_car_btn = Button(self, text="Найти авто", font=FONT, command=self.findCar, width=27)
-        self.add_car_btn = Button(self, text="Добавить авто", font=FONT, command=self.addCar, width=27)
-        self.add_model_btn = Button(self, text="Добавить модель авто", font=FONT, command=self.addCarModel, width=27)
-        self.delete_car_btn = Button(self, text="Удалить машину из автопарка", font=FONT, command=self.deleteCar, width=27)
+        self.cars_page_btn = Button(self, text="Работа с авто", font=FONT, command=self.goToCars, width=23)
+        self.models_page_btn = Button(self, text="Работа с моделями авто", font=FONT, command=self.goToModels, width=23)
+
         self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack, width=10)
 
         self.name_txt = Label(text=f"Автопарк", font=TITLE_FONT)
         self.name_txt.pack(pady=40)
 
+        elements = [self.cars_page_btn, self.models_page_btn, self.back_btn]
+
+        self.page_elements += elements
+        self.page_elements.append(self.name_txt)
+
+        [x.pack(pady=20) for x in elements]
+
+    def goToCars(self, *args, **kwargs):
+        self.clear_p()
+        cars_p = CarsPage(self.master, self.db)
+        cars_p.pack(expand=True, anchor="center")
+
+    def goToModels(self, *args, **kwargs):
+        self.clear_p()
+        models_p = ModelsPage(self.master, self.db)
+        models_p.pack(expand=True, anchor="center")
+
+
+class CarsPage(BasePage):
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db, *args, **kwargs)
+
+        self.set_previous_page(PreCarsPage)
+        self.all_cars_btn = Button(self, text="Просмотр всех машин", font=FONT, command=self.listOfCars, width=27)
+        self.free_cars_btn = Button(self, text="Просмотр свободных машин", font=FONT, command=self.checkFreeCars,
+                                    width=27)
+        self.find_car_btn = Button(self, text="Найти авто", font=FONT, command=self.findCar, width=27)
+        self.add_car_btn = Button(self, text="Добавить авто", font=FONT, command=self.addCar, width=27)
+        self.delete_car_btn = Button(self, text="Удалить машину из автопарка", font=FONT, command=self.deleteCar,
+                                     width=27)
+        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack, width=10)
+
+        self.name_txt = Label(text=f"Автопарк (автомобили)", font=TITLE_FONT)
+        self.name_txt.pack(pady=40)
+
         elements = [self.all_cars_btn, self.free_cars_btn, self.find_car_btn, self.add_car_btn, self.delete_car_btn,
-                    self.add_model_btn, self.back_btn]
+                    self.back_btn]
 
         self.page_elements += elements
         self.page_elements.append(self.name_txt)
@@ -36,44 +69,70 @@ class PreCarsPage(BasePage):
     def listOfCars(self, *args, **kwargs):
         self.clear_p()
         all_cars_page = AllCarsPage(self.master, db=self.db)
-        all_cars_page.set_previous_page(PreCarsPage)
         all_cars_page.pack(expand=True, anchor="center")
 
     def checkFreeCars(self, *args, **kwargs):
         self.clear_p()
         free_cars_page = FreeCarsPage(self.master, db=self.db)
-        free_cars_page.set_previous_page(PreCarsPage)
         free_cars_page.pack(expand=True, anchor="center")
 
     def findCar(self, *args, **kwargs):
         self.clear_p()
         find_car_page = FindCarPage(self.master, db=self.db)
-        find_car_page.set_previous_page(PreCarsPage)
         find_car_page.pack(expand=True, anchor="center")
 
     def addCar(self, *args, **kwargs):
         self.clear_p()
         add_car_page = AddCarPage(self.master, db=self.db)
-        add_car_page.set_previous_page(PreCarsPage)
-        add_car_page.pack(expand=True, anchor="center")
-
-    def addCarModel(self, *args, **kwargs):
-        self.clear_p()
-        add_car_page = AddModelPage(self.master, db=self.db)
-        add_car_page.set_previous_page(PreCarsPage)
         add_car_page.pack(expand=True, anchor="center")
 
     def deleteCar(self, *args, **kwargs):
         self.clear_p()
         delete_car_page = DeleteCarPage(self.master, db=self.db)
-        delete_car_page.set_previous_page(PreCarsPage)
         delete_car_page.pack(expand=True, anchor="center")
+
+
+class ModelsPage(BasePage):
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db, *args, **kwargs)
+        self.set_previous_page(PreCarsPage)
+
+        self.all_models_btn = Button(self, text="Просмотр всех моделей", font=FONT, command=self.allModels, width=25)
+        self.add_model_btn = Button(self, text="Добавить модель", font=FONT, command=self.addModel, width=25)
+        self.change_price_btn = Button(self, text="Изменить стоимость модели", font=FONT, command=self.changePrice, width=25)
+
+        self.back_btn = Button(self, text="Назад", font=FONT, command=self.goBack, width=10)
+
+        self.name_txt = Label(text=f"Автопарк (модели)", font=TITLE_FONT)
+        self.name_txt.pack(pady=40)
+
+        elements = [self.all_models_btn, self.add_model_btn, self.change_price_btn, self.back_btn]
+
+        self.page_elements += elements
+        self.page_elements.append(self.name_txt)
+
+        [x.pack(pady=20) for x in elements]
+
+    def allModels(self, *args, **kwargs):
+        self.clear_p()
+        all_models_page = AllModelsPage(self.master, db=self.db)
+        all_models_page.pack(expand=True, anchor="center")
+
+    def addModel(self, *args, **kwargs):
+        self.clear_p()
+        add_model_p = AddModelPage(self.master, db=self.db)
+        add_model_p.pack(expand=True, anchor="center")
+
+    def changePrice(self, *args, **kwargs):
+        self.clear_p()
+        change_price_p = ChangePricePage(self.master, db=self.db)
+        change_price_p.pack(expand=True, anchor="center")
 
 
 class AllCarsPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(CarsPage)
 
         page_name_txt = Label(self, text="Просмотр всех авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -137,7 +196,7 @@ class AllCarsPage(BasePage):
 class FreeCarsPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(CarsPage)
 
         page_name_txt = Label(self, text="Свободные автомобили", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -202,7 +261,7 @@ class FreeCarsPage(BasePage):
 class FindCarPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(CarsPage)
         page_name_txt = Label(self, text="Найти авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
 
@@ -238,7 +297,7 @@ class FindCarPage(BasePage):
 class CarsBySearching(BasePage):
     def __init__(self, master, db, brand, model, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(CarsPage)
 
         page_name_txt = Label(self, text="Найденные авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -303,7 +362,7 @@ class CarsBySearching(BasePage):
 class AddCarPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(CarsPage)
 
         page_name_txt = Label(text="Добавление авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -361,7 +420,7 @@ class AddCarPage(BasePage):
 class AddModelPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(ModelsPage)
 
         page_name_txt = Label(text="Добавление модели авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -424,7 +483,7 @@ class AddModelPage(BasePage):
 class DeleteCarPage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(CarsPage)
 
         page_name_txt = Label(text="Удаление авто", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -463,7 +522,7 @@ class DeleteCarPage(BasePage):
 class ChangePricePage(BasePage):
     def __init__(self, master, db, *args, **kwargs):
         super().__init__(master, db, *args, **kwargs)
-        self.set_previous_page(PreCarsPage)
+        self.set_previous_page(ModelsPage)
 
         page_name_txt = Label(self, text="Изменение цены аренды", font=TITLE_FONT)
         page_name_txt.pack(pady=30)
@@ -491,7 +550,7 @@ class ChangePricePage(BasePage):
 
         self.page_elements += elements
 
-        [x.pack(pady=15) for x in elements]
+        [x.pack(pady=10) for x in elements]
 
         change_price_btn = Button(self, text="Изменить стоимость аренды авто", font=FONT, command=self.changePrice)
         back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
@@ -508,18 +567,76 @@ class ChangePricePage(BasePage):
             return
 
         # Проверка корректности ввода цены
-        if not info[2].isdigit() or float(info[2]) <= 0:
+        if not (re.match(r"[+-]?([0-9]*[.])?[0-9]+", info[2]) and float(info[2]) >= 0):
             tkinter.messagebox.showerror(title="Ошибка!", message="Цена должна быть положительным числом!")
             return
 
         try:
             # Обновление цены в базе данных
-            updated_rows = self.db.change_model_cost(brand=info[0], model=info[1], new_price=info[2])
-
-            if updated_rows > 0:
-                tkinter.messagebox.showinfo(title="Успешно!", message="Стоимость аренды успешно обновлена!")
-            else:
-                tkinter.messagebox.showwarning(title="Не найдено!", message="Автомобиль с такими данными не найден.")
+            self.db.change_model_cost(brand_name=info[0], model_name=info[1], cost=info[2])
+            tkinter.messagebox.showinfo(title="Успешно!", message="Стоимость аренды успешно обновлена!")
         except Exception as e:
             logging.error(f"Ошибка при обновлении цены аренды: {e}")
             tkinter.messagebox.showerror(title="Ошибка!", message="Не удалось обновить цену. Проверьте корректность данных.")
+
+class AllModelsPage(BasePage):
+    def __init__(self, master, db, *args, **kwargs):
+        super().__init__(master, db, *args, **kwargs)
+        self.set_previous_page(ModelsPage)
+
+        page_name_txt = Label(self, text="Просмотр всех моделей", font=TITLE_FONT)
+        page_name_txt.pack(pady=30)
+
+        # Обертка для прокручиваемой области
+        self.scroll_frame = Frame(self)
+        self.scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Canvas для прокрутки
+        self.canvas = Canvas(self.scroll_frame, width=self.master.winfo_screenwidth() // 2,
+                             height=self.master.winfo_screenheight() // 2.5)
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        # Вертикальный Scrollbar
+        self.v_scrollbar = Scrollbar(self.scroll_frame, orient="vertical", command=self.canvas.yview)
+        self.v_scrollbar.pack(side="right", fill="y")
+        self.canvas.configure(yscrollcommand=self.v_scrollbar.set)
+
+        # Горизонтальный Scrollbar
+        self.h_scrollbar = Scrollbar(self.scroll_frame, orient="horizontal", command=self.canvas.xview)
+        self.h_scrollbar.pack(side="bottom", fill="x")
+        self.canvas.configure(xscrollcommand=self.h_scrollbar.set)
+
+        # Внутренний Frame для размещения содержимого
+        self.inner_frame = Frame(self.canvas)
+        self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
+
+        # Загрузка данных авто
+        self.load_models()
+
+        # Настройка прокрутки
+        self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind_all("<MouseWheel>", self._on_mouse_wheel)
+
+        back_btn = Button(self, text="Назад", font=FONT, command=self.goBack)
+        back_btn.pack(pady=20)
+
+    def load_models(self):
+        models = self.db.get_all_models()
+        if not models:
+            no_data_label = Label(self.inner_frame, text="Нет данных о моделях.", font=FONT)
+            no_data_label.pack(pady=10)
+            return
+
+        # Отображение автомобилей в виде списка
+        for i, model in enumerate(models, start=1):
+            model_info = (f"{i}. {model['brand_name']} - {model['model_name']} - {model['engine_volume']} - {model['horsepower']} - "
+                        f"{model['transmission']} - {model['rental_cost']}")
+            model_label = Label(self.inner_frame, text=model_info, font=FONT, anchor="w", justify="left")
+            model_label.pack(fill="x", padx=10, pady=5)
+
+    def _on_mouse_wheel(self, event):
+        """Обрабатывает прокрутку колесиком мыши."""
+        if event.state == 0:  # Прокрутка вертикальная
+            self.canvas.yview_scroll(-1 * (event.delta // 120), "units")
+        elif event.state == 1:  # Прокрутка горизонтальная (при удержании Shift)
+            self.canvas.xview_scroll(-1 * (event.delta // 120), "units")
