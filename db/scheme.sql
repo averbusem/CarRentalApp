@@ -492,20 +492,37 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION clear_cars_table()
 RETURNS VOID AS $$
 BEGIN
-    -- Удаляем автомобили, для которых нет активных бронирований
-    DELETE FROM Cars
-    WHERE vin_car NOT IN (
+    -- Удаляем бронирования для автомобилей, которые доступны
+    DELETE FROM Bookings
+    WHERE vin_car IN (
         SELECT vin_car
-        FROM Bookings
-        WHERE booking_status = 'active'
+        FROM Cars
+        WHERE car_status = 'available'
     );
+
+    -- Удаляем автомобили, которые доступны
+    DELETE FROM Cars
+    WHERE car_status = 'available';
 END;
 $$ LANGUAGE plpgsql;
+
 
 --3. Очистить таблицу customers
 CREATE OR REPLACE FUNCTION clear_customers_table()
 RETURNS VOID AS $$
 BEGIN
+    -- Удаляем бронирования для клиентов, у которых нет активных бронирований
+    DELETE FROM Bookings
+    WHERE passport_number IN (
+        SELECT passport_number
+        FROM Customers
+        WHERE passport_number NOT IN (
+            SELECT passport_number
+            FROM Bookings
+            WHERE booking_status = 'active'
+        )
+    );
+
     -- Удаляем клиентов, у которых нет активных бронирований
     DELETE FROM Customers
     WHERE passport_number NOT IN (
@@ -515,6 +532,7 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql;
+
 
 --4. Очистить таблицу Bookings
 CREATE OR REPLACE FUNCTION clear_bookings_table()
